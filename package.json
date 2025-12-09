@@ -1,8 +1,13 @@
 {
-  "name": "winccoa-vscode-extension",
-  "displayName": "WinCC OA Tools (template)",
-  "publisher": "winccoa-tools-pack",
-  "version": "0.1.0",
+  "name": "winccoa-script-actions",
+  "displayName": "WinCC OA Script Actions",
+  "description": "Execute WinCC OA CTRL scripts directly from VS Code",
+  "version": "0.0.1",
+  "publisher": "winccoa-tools",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/winccoa-tools-pack/vscode-winccoa-scriptactions"
+  },
   "author": "winccoa-tools-pack",
   "license": "MIT",
   "engines": {
@@ -11,8 +16,62 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
-  "main": "dist/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "winccoa.executeScript",
+        "title": "Start Script",
+        "category": "WinCC OA"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "winccoa.executeScript",
+          "when": "resourceExtname == '.ctl'",
+          "group": "winccoa@1"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "winccoa.executeScript",
+          "when": "resourceExtname == '.ctl'",
+          "group": "winccoa@1"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "WinCC OA Script Actions",
+      "properties": {
+        "winccoa.scriptActions.pathSource": {
+          "type": "string",
+          "enum": ["static", "automatic"],
+          "default": "static",
+          "description": "How to determine WinCC OA installation and project paths",
+          "enumDescriptions": [
+            "Use manually configured paths (below)",
+            "Auto-detect from workspace (requires npm package - coming soon)"
+          ]
+        },
+        "winccoa.scriptActions.installPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to WinCC OA installation (e.g., C:/Siemens/Automation/WinCC_OA/3.20 or /opt/WinCC_OA/3.20)",
+          "markdownDescription": "Path to WinCC OA installation. Only used when `pathSource` is `static`."
+        },
+        "winccoa.scriptActions.projectName": {
+          "type": "string",
+          "default": "",
+          "description": "WinCC OA project name (e.g., MyProject)",
+          "markdownDescription": "WinCC OA project name. Only used when `pathSource` is `static`."
+        }
+      }
+    }
+  },
   "scripts": {
     "build": "tsc --build",
     "compile": "tsc --build",
