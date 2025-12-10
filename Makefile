@@ -8,7 +8,8 @@ NODE_MODULES := node_modules
 
 # Output
 EXTENSION_NAME := winccoa-script-actions
-VSIX_FILE := $(BIN_DIR)/$(EXTENSION_NAME).vsix
+VERSION := $(shell node -p "require('./package.json').version")
+VSIX_FILE := $(BIN_DIR)/$(EXTENSION_NAME)-$(VERSION).vsix
 
 # Commands
 NPM := npm
