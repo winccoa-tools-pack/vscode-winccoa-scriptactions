@@ -8,9 +8,24 @@
     "type": "git",
     "url": "https://github.com/winccoa-tools-pack/vscode-winccoa-scriptactions"
   },
+  "bugs": {
+    "url": "https://github.com/mPokornyETM/vs-code-wincc-oa-projects-viewer/issues"
+  },
   "author": "winccoa-tools-pack",
   "license": "MIT",
   "icon": "resources/play_industrial_calm_128.png",
+  "keywords": [
+    "wincc-oa",
+    "scada",
+    "hmi",
+    "wincc-oa-script-action",
+    "wincc-oa-engineering",
+    "wincc-oa-runtime",
+    "siemens",
+    "etm",
+    "industrial",
+    "automation"
+  ],
   "engines": {
     "vscode": "^1.80.0"
   },
