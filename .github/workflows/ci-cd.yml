@@ -18,6 +18,8 @@ jobs:
       matrix:
         node-version: [18.x, 20.x, 22.x]
         
+    env:
+      VSCODE_TEST_CACHE: ${{ github.run_id }}-vscode-test-${{ matrix.node-version }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v6
