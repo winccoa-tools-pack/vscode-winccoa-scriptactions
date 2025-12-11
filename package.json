@@ -2,7 +2,7 @@
   "name": "winccoa-script-actions",
   "displayName": "WinCC OA Script Actions",
   "description": "Execute WinCC OA CTRL scripts directly from VS Code",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "publisher": "RichardJanisch",
   "repository": {
     "type": "git",
@@ -65,7 +65,10 @@
       "properties": {
         "winccoa.scriptActions.pathSource": {
           "type": "string",
-          "enum": ["static", "automatic"],
+          "enum": [
+            "static",
+            "automatic"
+          ],
           "default": "static",
           "description": "How to determine WinCC OA installation and project paths",
           "enumDescriptions": [
@@ -96,7 +99,6 @@
     "lint:fix": "eslint \"src/**/*.ts\" --fix",
     "lint:md": "markdownlint \"**/*.md\" --ignore node_modules",
     "lint:md:fix": "markdownlint \"**/*.md\" --ignore node_modules --fix",
-    
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\"",
     "format:md": "prettier --write \"**/*.md\"",
