@@ -15,10 +15,16 @@ jobs:
     name: Gitflow
     runs-on: ubuntu-latest
     steps:
+      - name: Warn if no PAT provided
+        if: ${{ secrets.PAT_TOKEN == '' }}
+        run: |
+          echo "WARNING: No secrets.PAT_TOKEN is configured. The workflow will use GITHUB_TOKEN which may be restricted from creating or approving pull requests in repository settings.";
+          echo "If automatic PR creation/approval is required, add a repository secret named PAT_TOKEN with a user personal access token (repo scope).";
+
       - name: Run gitflow action
         uses: Logerfo/gitflow-action@0.0.5
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.PAT_TOKEN != '' && secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
           dev: develop
           master: main
           release: release
