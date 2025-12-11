@@ -1,13 +1,12 @@
 import * as vscode from 'vscode';
 
-let outputChannel: vscode.OutputChannel | undefined;
-
 export class ExtensionOutputChannel {
     private static instance: vscode.OutputChannel;
 
     public static initialize(): vscode.OutputChannel {
         if (!ExtensionOutputChannel.instance) {
-            ExtensionOutputChannel.instance = vscode.window.createOutputChannel('WinCC OA scriptActions');
+            ExtensionOutputChannel.instance =
+                vscode.window.createOutputChannel('WinCC OA scriptActions');
         }
         return ExtensionOutputChannel.instance;
     }
