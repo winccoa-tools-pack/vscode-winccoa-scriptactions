@@ -2,11 +2,14 @@
   "name": "winccoa-script-actions",
   "displayName": "WinCC OA Script Actions",
   "description": "Execute WinCC OA CTRL scripts directly from VS Code",
-  "version": "0.0.1",
+  "version": "0.2.0",
   "publisher": "RichardJanisch",
   "repository": {
     "type": "git",
     "url": "https://github.com/winccoa-tools-pack/vscode-winccoa-scriptactions"
+  },
+  "config": {
+    "winccoaImage": "${{ secrets.DOCKER_USER }}/${{ github.repository_owner }}-${{ github.event.repository.name }}:${{ github.event.repository.name }}"
   },
   "bugs": {
     "url": "https://github.com/mPokornyETM/vs-code-wincc-oa-projects-viewer/issues"
