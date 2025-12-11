@@ -8,9 +8,6 @@
     "type": "git",
     "url": "https://github.com/winccoa-tools-pack/vscode-winccoa-scriptactions"
   },
-  "config": {
-    "winccoaImage": "${{ secrets.DOCKER_USER }}/${{ github.repository_owner }}-${{ github.event.repository.name }}:${{ github.event.repository.name }}"
-  },
   "bugs": {
     "url": "https://github.com/mPokornyETM/vs-code-wincc-oa-projects-viewer/issues"
   },
