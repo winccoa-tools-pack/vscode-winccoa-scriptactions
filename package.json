@@ -2,7 +2,7 @@
   "name": "winccoa-script-actions",
   "displayName": "WinCC OA Script Actions",
   "description": "Execute WinCC OA CTRL scripts directly from VS Code",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "publisher": "RichardJanisch",
   "repository": {
     "type": "git",
@@ -113,7 +113,7 @@
   "devDependencies": {
     "typescript": "^5.2.0",
     "@types/vscode": "^1.80.0",
-    "@types/node": "^24.10.1",
+    "@types/node": "^24.10.2",
     "@types/mocha": "^10.0.6",
     "@vscode/vsce": "^3.7.1",
     "@vscode/test-electron": "^2.3.9",
