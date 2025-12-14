@@ -30,3 +30,4 @@ coverage/
 *.tmp
 .cache/
 .vscode-test/
+DevEnv.code-workspace
