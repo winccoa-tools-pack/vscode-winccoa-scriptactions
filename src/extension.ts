@@ -17,13 +17,24 @@ export function activate(context: vscode.ExtensionContext) {
     const outputChannel = ExtensionOutputChannel.initialize();
     context.subscriptions.push(outputChannel);
 
-    ExtensionOutputChannel.info('Extension activated');
+    ExtensionOutputChannel.info('Extension', 'WinCC OA Script Actions Extension activated');
+    ExtensionOutputChannel.debug('Extension', `Extension Path: ${context.extensionPath}`);
+    ExtensionOutputChannel.debug('Extension', `VS Code Version: ${vscode.version}`);
+
+    // Watch for configuration changes
+    context.subscriptions.push(
+        vscode.workspace.onDidChangeConfiguration(e => {
+            if (e.affectsConfiguration('winccoaScriptActions.logLevel')) {
+                ExtensionOutputChannel.updateLogLevel();
+            }
+        })
+    );
 
     // Register command
     const executeScriptCommand = vscode.commands.registerCommand(
         'winccoa.executeScript',
         async (uri?: vscode.Uri) => {
-            ExtensionOutputChannel.debug(`Command called with URI: ${uri?.fsPath || 'none'}`);
+            ExtensionOutputChannel.debug('Command', `executeScript called with URI: ${uri?.fsPath || 'none'}`);
 
             // If no URI provided (e.g., from command palette), use active editor
             if (!uri && vscode.window.activeTextEditor) {
@@ -31,7 +42,7 @@ export function activate(context: vscode.ExtensionContext) {
             }
 
             if (!uri) {
-                ExtensionOutputChannel.error('No .ctl file selected');
+                ExtensionOutputChannel.error('Command', 'No .ctl file selected');
                 vscode.window.showErrorMessage('No .ctl file selected');
                 return;
             }
@@ -42,24 +53,24 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(executeScriptCommand);
 
-    ExtensionOutputChannel.success('Command registered: winccoa.executeScript');
+    ExtensionOutputChannel.success('Extension', 'Command registered: winccoa.executeScript');
 }
 
 async function executeScript(uri: vscode.Uri): Promise<void> {
     try {
         const filePath = uri.fsPath;
-        ExtensionOutputChannel.info(`Executing script: ${path.basename(filePath)}`);
+        ExtensionOutputChannel.info('ScriptExecution', `Executing script: ${path.basename(filePath)}`);
 
         // Validate file extension
         if (!filePath.toLowerCase().endsWith('.ctl')) {
-            ExtensionOutputChannel.error('Invalid file type - only .ctl files supported');
+            ExtensionOutputChannel.error('ScriptExecution', 'Invalid file type - only .ctl files supported');
             vscode.window.showErrorMessage('Only .ctl files can be executed.');
             return;
         }
 
         // Check if file exists
         if (!fs.existsSync(filePath)) {
-            ExtensionOutputChannel.error(`File not found: ${filePath}`);
+            ExtensionOutputChannel.error('ScriptExecution', `File not found: ${filePath}`);
             vscode.window.showErrorMessage(`File not found: ${filePath}`);
             return;
         }
@@ -72,7 +83,7 @@ async function executeScript(uri: vscode.Uri): Promise<void> {
 
         // Build command
         const command = buildExecutionCommand(filePath, config);
-        ExtensionOutputChannel.debug(`Command: ${command}`);
+        ExtensionOutputChannel.debug('ScriptExecution', `Command: ${command}`);
 
         // Show progress
         await vscode.window.withProgress(
@@ -87,27 +98,27 @@ async function executeScript(uri: vscode.Uri): Promise<void> {
                     const { stdout, stderr } = await execAsync(command);
 
                     if (stderr) {
-                        ExtensionOutputChannel.warn(`stderr: ${stderr}`);
+                        ExtensionOutputChannel.warn('ScriptExecution', `stderr: ${stderr}`);
                     }
                     if (stdout) {
-                        ExtensionOutputChannel.info(`stdout: ${stdout}`);
+                        ExtensionOutputChannel.info('ScriptExecution', `stdout: ${stdout}`);
                     }
 
-                    ExtensionOutputChannel.success(`Script started: ${path.basename(filePath)}`);
+                    ExtensionOutputChannel.success('ScriptExecution', `Script started: ${path.basename(filePath)}`);
                     vscode.window.showInformationMessage(
                         `✓ Script started: ${path.basename(filePath)}`,
                     );
                 } catch (err: unknown) {
-                    const message = err instanceof Error ? err.message : String(err);
-                    ExtensionOutputChannel.error(`Execution failed: ${message}`);
-                    vscode.window.showErrorMessage(`✗ Script execution failed: ${message}`);
+                    const error = err instanceof Error ? err : new Error(String(err));
+                    ExtensionOutputChannel.error('ScriptExecution', `Execution failed: ${error.message}`, error);
+                    vscode.window.showErrorMessage(`✗ Script execution failed: ${error.message}`);
                 }
             },
         );
-    } catch (error: unknown) {
-        const message = error instanceof Error ? error.message : String(error);
-        ExtensionOutputChannel.error(`Unexpected error: ${message}`);
-        vscode.window.showErrorMessage(`Error: ${message}`);
+    } catch (err: unknown) {
+        const error = err instanceof Error ? err : new Error(String(err));
+        ExtensionOutputChannel.error('ScriptExecution', `Unexpected error: ${error.message}`, error);
+        vscode.window.showErrorMessage(`Error: ${error.message}`);
     }
 }
 
@@ -115,11 +126,11 @@ async function getScriptConfig(): Promise<ScriptConfig | null> {
     const config = vscode.workspace.getConfiguration('winccoa.scriptActions');
     const pathSource = config.get<string>('pathSource', 'static');
 
-    ExtensionOutputChannel.debug(`Path source mode: ${pathSource}`);
+    ExtensionOutputChannel.debug('Configuration', `Path source mode: ${pathSource}`);
 
     if (pathSource === 'automatic') {
         // Dummy implementation - will be replaced with npm package later
-        ExtensionOutputChannel.warn('Automatic path detection not yet implemented');
+        ExtensionOutputChannel.warn('Configuration', 'Automatic path detection not yet implemented');
         vscode.window.showWarningMessage(
             'Automatic path detection is not yet implemented. Please use "static" mode and configure paths manually.',
         );
@@ -130,11 +141,11 @@ async function getScriptConfig(): Promise<ScriptConfig | null> {
     const installPath = config.get<string>('installPath', '');
     const projectName = config.get<string>('projectName', '');
 
-    ExtensionOutputChannel.debug(`installPath: ${installPath}, projectName: ${projectName}`);
+    ExtensionOutputChannel.debug('Configuration', `installPath: ${installPath}, projectName: ${projectName}`);
 
     // Validate configuration
     if (!installPath) {
-        ExtensionOutputChannel.error('Installation path not configured');
+        ExtensionOutputChannel.error('Configuration', 'Installation path not configured');
         vscode.window.showErrorMessage(
             'WinCC OA installation path not configured. Please set "winccoa.scriptActions.installPath" in settings.',
         );
@@ -142,7 +153,7 @@ async function getScriptConfig(): Promise<ScriptConfig | null> {
     }
 
     if (!projectName) {
-        ExtensionOutputChannel.error('Project name not configured');
+        ExtensionOutputChannel.error('Configuration', 'Project name not configured');
         vscode.window.showErrorMessage(
             'WinCC OA project name not configured. Please set "winccoa.scriptActions.projectName" in settings.',
         );
@@ -154,7 +165,7 @@ async function getScriptConfig(): Promise<ScriptConfig | null> {
 
     // Check if installation path exists
     if (!fs.existsSync(normalizedInstallPath)) {
-        ExtensionOutputChannel.warn(`Installation path does not exist: ${normalizedInstallPath}`);
+        ExtensionOutputChannel.warn('Configuration', `Installation path does not exist: ${normalizedInstallPath}`);
         vscode.window.showWarningMessage(
             `WinCC OA installation path does not exist: ${normalizedInstallPath}`,
         );
@@ -162,7 +173,8 @@ async function getScriptConfig(): Promise<ScriptConfig | null> {
     }
 
     ExtensionOutputChannel.info(
-        `Configuration loaded - Project: ${projectName}, Install: ${normalizedInstallPath}`,
+        'Configuration',
+        `Configuration loaded - Project: ${projectName}, Install: ${normalizedInstallPath}`
     );
 
     return {
@@ -200,5 +212,5 @@ function buildExecutionCommand(scriptPath: string, config: ScriptConfig): string
 }
 
 export function deactivate() {
-    ExtensionOutputChannel.info('Extension deactivated');
+    ExtensionOutputChannel.info('Extension', 'WinCC OA Script Actions Extension deactivated');
 }
