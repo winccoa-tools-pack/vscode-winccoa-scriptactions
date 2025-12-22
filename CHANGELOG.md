@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - TBD
+
+### Added
+- Automatic project detection mode via WinCC OA Core extension integration
+- Extension dependency on `winccoa-tools-pack.winccoa-core` (optional)
+- Automatic WinCC OA installation path and project name resolution in automatic mode
+- Fallback to static configuration when Core extension is not available
+
+### Changed
+- `pathSource` setting now supports both `static` (manual configuration) and `automatic` (Core extension) modes
+- Improved error handling when automatic mode is selected but Core extension is not installed
+
 ## [0.1.1] - 2025-12-14
 
 ### Added

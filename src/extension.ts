@@ -21,11 +21,18 @@ export function activate(context: vscode.ExtensionContext) {
     ExtensionOutputChannel.debug('Extension', `Extension Path: ${context.extensionPath}`);
     ExtensionOutputChannel.debug('Extension', `VS Code Version: ${vscode.version}`);
 
+    // Setup Core extension integration if in automatic mode
+    setupCoreExtensionIntegration(context);
+
     // Watch for configuration changes
     context.subscriptions.push(
         vscode.workspace.onDidChangeConfiguration(e => {
             if (e.affectsConfiguration('winccoaScriptActions.logLevel')) {
                 ExtensionOutputChannel.updateLogLevel();
+            }
+            if (e.affectsConfiguration('winccoa.scriptActions.pathSource')) {
+                // Re-setup Core integration when mode changes
+                setupCoreExtensionIntegration(context);
             }
         })
     );
@@ -54,6 +61,46 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(executeScriptCommand);
 
     ExtensionOutputChannel.success('Extension', 'Command registered: winccoa.executeScript');
+}
+
+async function setupCoreExtensionIntegration(context: vscode.ExtensionContext) {
+    const config = vscode.workspace.getConfiguration('winccoa.scriptActions');
+    const pathSource = config.get<string>('pathSource', 'static');
+
+    if (pathSource !== 'automatic') {
+        ExtensionOutputChannel.debug('CoreIntegration', 'Static mode - Core extension integration disabled');
+        return;
+    }
+
+    const coreExtension = vscode.extensions.getExtension('winccoa-tools-pack.winccoa-core');
+    
+    if (!coreExtension) {
+        ExtensionOutputChannel.warn('CoreIntegration', 'WinCC OA Core extension not found - automatic mode unavailable');
+        return;
+    }
+
+    if (!coreExtension.isActive) {
+        ExtensionOutputChannel.debug('CoreIntegration', 'Activating Core extension...');
+        await coreExtension.activate();
+    }
+
+    const coreApi = coreExtension.exports;
+    
+    // Subscribe to project changes
+    coreApi.onDidChangeProject((project: any) => {
+        if (project) {
+            ExtensionOutputChannel.info('CoreIntegration', `Project changed: ${project.name} (${project.oaInstallPath})`);
+        } else {
+            ExtensionOutputChannel.info('CoreIntegration', 'No project selected');
+        }
+    });
+
+    const currentProject = coreApi.getCurrentProject();
+    if (currentProject) {
+        ExtensionOutputChannel.info('CoreIntegration', `Current project: ${currentProject.name} (${currentProject.oaInstallPath})`);
+    } else {
+        ExtensionOutputChannel.debug('CoreIntegration', 'No project currently selected');
+    }
 }
 
 async function executeScript(uri: vscode.Uri): Promise<void> {
@@ -129,12 +176,39 @@ async function getScriptConfig(): Promise<ScriptConfig | null> {
     ExtensionOutputChannel.debug('Configuration', `Path source mode: ${pathSource}`);
 
     if (pathSource === 'automatic') {
-        // Dummy implementation - will be replaced with npm package later
-        ExtensionOutputChannel.warn('Configuration', 'Automatic path detection not yet implemented');
-        vscode.window.showWarningMessage(
-            'Automatic path detection is not yet implemented. Please use "static" mode and configure paths manually.',
-        );
-        return null;
+        // Get project info from Core extension
+        const coreExtension = vscode.extensions.getExtension('winccoa-tools-pack.winccoa-core');
+        
+        if (!coreExtension) {
+            ExtensionOutputChannel.error('Configuration', 'WinCC OA Core extension not found');
+            vscode.window.showErrorMessage(
+                'WinCC OA Core extension is required for automatic mode. Please install it or switch to "static" mode.',
+            );
+            return null;
+        }
+
+        if (!coreExtension.isActive) {
+            ExtensionOutputChannel.debug('Configuration', 'Activating Core extension...');
+            await coreExtension.activate();
+        }
+
+        const coreApi = coreExtension.exports;
+        const currentProject = coreApi.getCurrentProject();
+
+        if (!currentProject) {
+            ExtensionOutputChannel.warn('Configuration', 'No WinCC OA project selected in Core extension');
+            vscode.window.showWarningMessage(
+                'No WinCC OA project selected. Please select a project using the WinCC OA status bar.',
+            );
+            return null;
+        }
+
+        ExtensionOutputChannel.debug('Configuration', `Automatic mode - Project: ${currentProject.name}, Install: ${currentProject.oaInstallPath}`);
+
+        return {
+            installPath: currentProject.oaInstallPath,
+            projectName: currentProject.name,
+        };
     }
 
     // Static mode - get from settings
