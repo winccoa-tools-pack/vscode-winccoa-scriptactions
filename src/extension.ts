@@ -60,7 +60,30 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(executeScriptCommand);
 
-    ExtensionOutputChannel.success('Extension', 'Command registered: winccoa.executeScript');
+    // Register command with arguments
+    const executeScriptWithArgsCommand = vscode.commands.registerCommand(
+        'winccoa.executeScriptWithArgs',
+        async (uri?: vscode.Uri) => {
+            ExtensionOutputChannel.debug('Command', `executeScriptWithArgs called with URI: ${uri?.fsPath || 'none'}`);
+
+            // If no URI provided (e.g., from command palette), use active editor
+            if (!uri && vscode.window.activeTextEditor) {
+                uri = vscode.window.activeTextEditor.document.uri;
+            }
+
+            if (!uri) {
+                ExtensionOutputChannel.error('Command', 'No .ctl file selected');
+                vscode.window.showErrorMessage('No .ctl file selected');
+                return;
+            }
+
+            await executeScriptWithArgs(uri);
+        },
+    );
+
+    context.subscriptions.push(executeScriptWithArgsCommand);
+
+    ExtensionOutputChannel.success('Extension', 'Commands registered: winccoa.executeScript, winccoa.executeScriptWithArgs');
 }
 
 async function setupCoreExtensionIntegration(context: vscode.ExtensionContext) {
@@ -103,10 +126,11 @@ async function setupCoreExtensionIntegration(context: vscode.ExtensionContext) {
     }
 }
 
-async function executeScript(uri: vscode.Uri): Promise<void> {
+async function executeScript(uri: vscode.Uri, args?: string): Promise<void> {
     try {
         const filePath = uri.fsPath;
-        ExtensionOutputChannel.info('ScriptExecution', `Executing script: ${path.basename(filePath)}`);
+        const logMessage = args ? `Executing script with args: ${path.basename(filePath)} ${args}` : `Executing script: ${path.basename(filePath)}`;
+        ExtensionOutputChannel.info('ScriptExecution', logMessage);
 
         // Validate file extension
         if (!filePath.toLowerCase().endsWith('.ctl')) {
@@ -129,14 +153,15 @@ async function executeScript(uri: vscode.Uri): Promise<void> {
         }
 
         // Build command
-        const command = buildExecutionCommand(filePath, config);
+        const command = buildExecutionCommand(filePath, config, args);
         ExtensionOutputChannel.debug('ScriptExecution', `Command: ${command}`);
 
         // Show progress
+        const progressTitle = args ? `Executing ${path.basename(filePath)} with args...` : `Executing ${path.basename(filePath)}...`;
         await vscode.window.withProgress(
             {
                 location: vscode.ProgressLocation.Notification,
-                title: `Executing ${path.basename(filePath)}...`,
+                title: progressTitle,
                 cancellable: false,
             },
             async () => {
@@ -167,6 +192,24 @@ async function executeScript(uri: vscode.Uri): Promise<void> {
         ExtensionOutputChannel.error('ScriptExecution', `Unexpected error: ${error.message}`, error);
         vscode.window.showErrorMessage(`Error: ${error.message}`);
     }
+}
+
+async function executeScriptWithArgs(uri: vscode.Uri): Promise<void> {
+    // Prompt user for arguments
+    const args = await vscode.window.showInputBox({
+        prompt: 'Enter script arguments (space-separated)',
+        placeHolder: 'arg1 arg2 arg3',
+        value: ''
+    });
+
+    // User cancelled
+    if (args === undefined) {
+        ExtensionOutputChannel.info('ScriptExecution', 'Script execution with args cancelled by user');
+        return;
+    }
+
+    // Execute with arguments (even if empty)
+    await executeScript(uri, args);
 }
 
 async function getScriptConfig(): Promise<ScriptConfig | null> {
@@ -257,7 +300,7 @@ async function getScriptConfig(): Promise<ScriptConfig | null> {
     };
 }
 
-function buildExecutionCommand(scriptPath: string, config: ScriptConfig): string {
+function buildExecutionCommand(scriptPath: string, config: ScriptConfig, args?: string): string {
     const platform = process.platform;
     const isWindows = platform === 'win32';
 
@@ -274,13 +317,18 @@ function buildExecutionCommand(scriptPath: string, config: ScriptConfig): string
     }
 
     // Build command
-    // Format: <WCCOActrl> <scriptPath> -proj <projectName>
+    // Format: <WCCOActrl> <scriptPath> -proj <projectName> [args]
     const parts = [
         `"${fullExecutablePath}"`,
         `"${normalizedScriptPath}"`,
         '-proj',
         config.projectName,
     ];
+
+    // Add arguments if provided
+    if (args && args.trim()) {
+        parts.push(args.trim());
+    }
 
     return parts.join(' ');
 }

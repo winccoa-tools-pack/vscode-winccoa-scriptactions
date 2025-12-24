@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2025-12-24
+
+### Added
+- New command `winccoa.executeScriptWithArgs` for executing scripts with custom arguments
+- Input dialog for entering script arguments (space-separated)
+- Support for passing arguments to WCCOActrl (e.g., `arg1 arg2 arg3`)
+- Command available via Command Palette: "WinCC OA: Start Script with Arguments"
+
+### Changed
+- Extended `buildExecutionCommand` to support optional arguments parameter
+- Improved logging to show when scripts are executed with arguments
+
 ## [0.2.0] - TBD
 
 ### Added
