@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2025-12-25
+
+### Fixed
+- Fixed `executeScriptWithArgs` to pass arguments as plain strings without additional flags
+- Arguments are now directly appended after `-proj` parameter for proper WCCOActrl execution
+- Prepared for integration with Test Explorer extension for single test case execution
+
 ## [0.3.0] - 2025-12-24
 
 ### Added

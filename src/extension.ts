@@ -63,8 +63,8 @@ export function activate(context: vscode.ExtensionContext) {
     // Register command with arguments
     const executeScriptWithArgsCommand = vscode.commands.registerCommand(
         'winccoa.executeScriptWithArgs',
-        async (uri?: vscode.Uri) => {
-            ExtensionOutputChannel.debug('Command', `executeScriptWithArgs called with URI: ${uri?.fsPath || 'none'}`);
+        async (uri?: vscode.Uri, args?: string) => {
+            ExtensionOutputChannel.debug('Command', `executeScriptWithArgs called with URI: ${uri?.fsPath || 'none'}, args: ${args || 'none'}`);
 
             // If no URI provided (e.g., from command palette), use active editor
             if (!uri && vscode.window.activeTextEditor) {
@@ -77,7 +77,7 @@ export function activate(context: vscode.ExtensionContext) {
                 return;
             }
 
-            await executeScriptWithArgs(uri);
+            await executeScriptWithArgs(uri, args);
         },
     );
 
@@ -194,22 +194,26 @@ async function executeScript(uri: vscode.Uri, args?: string): Promise<void> {
     }
 }
 
-async function executeScriptWithArgs(uri: vscode.Uri): Promise<void> {
-    // Prompt user for arguments
-    const args = await vscode.window.showInputBox({
-        prompt: 'Enter script arguments (space-separated)',
-        placeHolder: 'arg1 arg2 arg3',
-        value: ''
-    });
+async function executeScriptWithArgs(uri: vscode.Uri, args?: string): Promise<void> {
+    let finalArgs = args;
+    
+    // If no args provided programmatically, prompt user for arguments
+    if (finalArgs === undefined) {
+        finalArgs = await vscode.window.showInputBox({
+            prompt: 'Enter script arguments (space-separated)',
+            placeHolder: 'arg1 arg2 arg3',
+            value: ''
+        });
 
-    // User cancelled
-    if (args === undefined) {
-        ExtensionOutputChannel.info('ScriptExecution', 'Script execution with args cancelled by user');
-        return;
+        // User cancelled
+        if (finalArgs === undefined) {
+            ExtensionOutputChannel.info('ScriptExecution', 'Script execution with args cancelled by user');
+            return;
+        }
     }
 
     // Execute with arguments (even if empty)
-    await executeScript(uri, args);
+    await executeScript(uri, finalArgs);
 }
 
 async function getScriptConfig(): Promise<ScriptConfig | null> {

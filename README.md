@@ -1,6 +1,6 @@
 # WinCC OA Script Actions
 
-![Version](https://img.shields.io/badge/version-0.2.0-blue.svg) ![License](https://img.shields.io/badge/license-MIT-green.svg) ![VS Code](https://img.shields.io/badge/VS%20Code-^1.105.0-007ACC.svg)
+![Version](https://img.shields.io/badge/version-0.3.0-blue.svg) ![License](https://img.shields.io/badge/license-MIT-green.svg) ![VS Code](https://img.shields.io/badge/VS%20Code-^1.105.0-007ACC.svg)
 
 ## Execute WinCC OA CTRL scripts directly from Visual Studio Code
 
