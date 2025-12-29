@@ -2,7 +2,7 @@
   "name": "winccoa-script-actions",
   "displayName": "WinCC OA Script Actions",
   "description": "Execute WinCC OA CTRL scripts directly from VS Code",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "publisher": "RichardJanisch",
   "repository": {
     "type": "git",
@@ -49,6 +49,16 @@
       {
         "command": "winccoa.executeScriptWithArgs",
         "title": "Start Script with Arguments",
+        "category": "WinCC OA"
+      },
+      {
+        "command": "winccoa.executeScriptWithEventConnection",
+        "title": "Start Script with Event Connection",
+        "category": "WinCC OA"
+      },
+      {
+        "command": "winccoa.executeScriptWithArgsAndEventConnection",
+        "title": "Start Script with Arguments and Event Connection",
         "category": "WinCC OA"
       }
     ],

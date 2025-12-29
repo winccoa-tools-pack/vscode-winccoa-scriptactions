@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2025-12-28
+
+### Added
+- **-n Flag Support**: Scripts now run without event connection by default (faster startup, lighter weight)
+- New command: `winccoa.executeScriptWithEventConnection` - Execute scripts WITH event manager connection
+- New command: `winccoa.executeScriptWithArgsAndEventConnection` - Execute scripts with arguments AND event connection
+- Enhanced logging shows whether script runs with or without event connection
+
+### Changed
+- **BREAKING**: Default behavior changed - `executeScript` and `executeScriptWithArgs` now use `-n` flag
+- Right-click → "Start Script" executes with `-n` (no event connection) for performance
+- Command Palette → "Start Script with Event Connection" for scripts that need events
+- `buildExecutionCommand` now accepts `withEventConnection` parameter
+
+### Performance
+- Scripts start significantly faster without event manager overhead
+- Reduced resource usage for scripts that don't need event connectivity
+
 ## [0.3.1] - 2025-12-25
 
 ### Fixed

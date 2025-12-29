@@ -37,7 +37,7 @@ export function activate(context: vscode.ExtensionContext) {
         })
     );
 
-    // Register command
+    // Register command (default: -n flag for faster execution without event connection)
     const executeScriptCommand = vscode.commands.registerCommand(
         'winccoa.executeScript',
         async (uri?: vscode.Uri) => {
@@ -54,13 +54,13 @@ export function activate(context: vscode.ExtensionContext) {
                 return;
             }
 
-            await executeScript(uri);
+            await executeScript(uri, undefined, false); // false = use -n flag
         },
     );
 
     context.subscriptions.push(executeScriptCommand);
 
-    // Register command with arguments
+    // Register command with arguments (default: -n flag)
     const executeScriptWithArgsCommand = vscode.commands.registerCommand(
         'winccoa.executeScriptWithArgs',
         async (uri?: vscode.Uri, args?: string) => {
@@ -77,13 +77,59 @@ export function activate(context: vscode.ExtensionContext) {
                 return;
             }
 
-            await executeScriptWithArgs(uri, args);
+            await executeScriptWithArgs(uri, args, false); // false = use -n flag
         },
     );
 
     context.subscriptions.push(executeScriptWithArgsCommand);
 
-    ExtensionOutputChannel.success('Extension', 'Commands registered: winccoa.executeScript, winccoa.executeScriptWithArgs');
+    // Register command with event connection (without -n flag)
+    const executeScriptWithEventConnectionCommand = vscode.commands.registerCommand(
+        'winccoa.executeScriptWithEventConnection',
+        async (uri?: vscode.Uri) => {
+            ExtensionOutputChannel.debug('Command', `executeScriptWithEventConnection called with URI: ${uri?.fsPath || 'none'}`);
+
+            // If no URI provided (e.g., from command palette), use active editor
+            if (!uri && vscode.window.activeTextEditor) {
+                uri = vscode.window.activeTextEditor.document.uri;
+            }
+
+            if (!uri) {
+                ExtensionOutputChannel.error('Command', 'No .ctl file selected');
+                vscode.window.showErrorMessage('No .ctl file selected');
+                return;
+            }
+
+            await executeScript(uri, undefined, true); // true = WITH event connection
+        },
+    );
+
+    context.subscriptions.push(executeScriptWithEventConnectionCommand);
+
+    // Register command with arguments AND event connection
+    const executeScriptWithArgsAndEventConnectionCommand = vscode.commands.registerCommand(
+        'winccoa.executeScriptWithArgsAndEventConnection',
+        async (uri?: vscode.Uri, args?: string) => {
+            ExtensionOutputChannel.debug('Command', `executeScriptWithArgsAndEventConnection called with URI: ${uri?.fsPath || 'none'}, args: ${args || 'none'}`);
+
+            // If no URI provided (e.g., from command palette), use active editor
+            if (!uri && vscode.window.activeTextEditor) {
+                uri = vscode.window.activeTextEditor.document.uri;
+            }
+
+            if (!uri) {
+                ExtensionOutputChannel.error('Command', 'No .ctl file selected');
+                vscode.window.showErrorMessage('No .ctl file selected');
+                return;
+            }
+
+            await executeScriptWithArgs(uri, args, true); // true = WITH event connection
+        },
+    );
+
+    context.subscriptions.push(executeScriptWithArgsAndEventConnectionCommand);
+
+    ExtensionOutputChannel.success('Extension', 'Commands registered: winccoa.executeScript, winccoa.executeScriptWithArgs, winccoa.executeScriptWithEventConnection, winccoa.executeScriptWithArgsAndEventConnection');
 }
 
 async function setupCoreExtensionIntegration(context: vscode.ExtensionContext) {
@@ -126,10 +172,13 @@ async function setupCoreExtensionIntegration(context: vscode.ExtensionContext) {
     }
 }
 
-async function executeScript(uri: vscode.Uri, args?: string): Promise<void> {
+async function executeScript(uri: vscode.Uri, args?: string, withEventConnection: boolean = false): Promise<void> {
     try {
         const filePath = uri.fsPath;
-        const logMessage = args ? `Executing script with args: ${path.basename(filePath)} ${args}` : `Executing script: ${path.basename(filePath)}`;
+        const eventConnStr = withEventConnection ? 'with event connection' : 'without event connection (-n)';
+        const logMessage = args ? 
+            `Executing script with args (${eventConnStr}): ${path.basename(filePath)} ${args}` : 
+            `Executing script (${eventConnStr}): ${path.basename(filePath)}`;
         ExtensionOutputChannel.info('ScriptExecution', logMessage);
 
         // Validate file extension
@@ -153,7 +202,7 @@ async function executeScript(uri: vscode.Uri, args?: string): Promise<void> {
         }
 
         // Build command
-        const command = buildExecutionCommand(filePath, config, args);
+        const command = buildExecutionCommand(filePath, config, args, withEventConnection);
         ExtensionOutputChannel.debug('ScriptExecution', `Command: ${command}`);
 
         // Show progress
@@ -194,7 +243,7 @@ async function executeScript(uri: vscode.Uri, args?: string): Promise<void> {
     }
 }
 
-async function executeScriptWithArgs(uri: vscode.Uri, args?: string): Promise<void> {
+async function executeScriptWithArgs(uri: vscode.Uri, args?: string, withEventConnection: boolean = false): Promise<void> {
     let finalArgs = args;
     
     // If no args provided programmatically, prompt user for arguments
@@ -213,7 +262,7 @@ async function executeScriptWithArgs(uri: vscode.Uri, args?: string): Promise<vo
     }
 
     // Execute with arguments (even if empty)
-    await executeScript(uri, finalArgs);
+    await executeScript(uri, finalArgs, withEventConnection);
 }
 
 async function getScriptConfig(): Promise<ScriptConfig | null> {
@@ -304,7 +353,7 @@ async function getScriptConfig(): Promise<ScriptConfig | null> {
     };
 }
 
-function buildExecutionCommand(scriptPath: string, config: ScriptConfig, args?: string): string {
+function buildExecutionCommand(scriptPath: string, config: ScriptConfig, args?: string, withEventConnection: boolean = false): string {
     const platform = process.platform;
     const isWindows = platform === 'win32';
 
@@ -321,13 +370,18 @@ function buildExecutionCommand(scriptPath: string, config: ScriptConfig, args?: 
     }
 
     // Build command
-    // Format: <WCCOActrl> <scriptPath> -proj <projectName> [args]
+    // Format: <WCCOActrl> <scriptPath> -proj <projectName> [-n] [args]
     const parts = [
         `"${fullExecutablePath}"`,
         `"${normalizedScriptPath}"`,
         '-proj',
         config.projectName,
     ];
+
+    // Add -n flag for no event connection (faster, lighter weight)
+    if (!withEventConnection) {
+        parts.push('-n');
+    }
 
     // Add arguments if provided
     if (args && args.trim()) {
