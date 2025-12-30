@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.2] - 2025-12-30
+
+### Fixed
+- **Code References**: Updated extension ID references from `winccoa-tools-pack.winccoa-core` to `RichardJanisch.winccoa-control` in TypeScript code
+
 ## [1.0.1] - 2025-12-30
 
 ### Fixed
