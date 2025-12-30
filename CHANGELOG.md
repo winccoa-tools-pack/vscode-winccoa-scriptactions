@@ -7,6 +7,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2025-12-29
+
+### 🎉 First Stable Release
+
+This is the first stable release of WinCC OA Script Actions extension.
+
+### Added
+- **Script Execution Modes**:
+  - Execute scripts without event connection (default, `-n` flag for fast startup)
+  - Execute scripts with event connection (for scripts that need event manager)
+  - Execute scripts with custom arguments
+  - Execute scripts with arguments AND event connection
+- **Right-Click Menu**: Quick access to "Start Script" in Explorer and editor
+- **Command Palette**: Four execution modes available via `Ctrl+Shift+P`
+- **Cross-Platform**: Windows and Linux support
+- **Integration**: WinCC OA Control extension support for automatic path detection
+
+### Configuration
+- `winccoa.scriptActions.pathSource`: Choose between `static` or `automatic` path detection
+- `winccoa.scriptActions.installPath`: Manual WinCC OA installation path
+- `winccoa.scriptActions.projectName`: Manual project name
+- `winccoa.scriptActions.logLevel`: Configurable logging (ERROR, WARN, INFO, DEBUG, TRACE)
+
+### Known Limitations
+- Script output not captured in VS Code terminal (runs in background)
+- Complex data structures not supported as arguments
+- Automatic path detection requires WinCC OA Control extension
+
+### Dependencies
+- WinCC OA Control extension (RichardJanisch.winccoa-core) - optional, for automatic path detection
+
+### Breaking Changes from 0.x
+- Default execution mode now uses `-n` flag (no event connection) for performance
+- Extension ID publisher changed to RichardJanisch
+- Icon updated to unified WinCC OA Script Actions design
+
+---
+
 ## [0.4.0] - 2025-12-28
 
 ### Added

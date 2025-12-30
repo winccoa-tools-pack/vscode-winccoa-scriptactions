@@ -2,7 +2,7 @@
   "name": "winccoa-script-actions",
   "displayName": "WinCC OA Script Actions",
   "description": "Execute WinCC OA CTRL scripts directly from VS Code",
-  "version": "0.4.0",
+  "version": "1.0.0",
   "publisher": "RichardJanisch",
   "repository": {
     "type": "git",
@@ -11,9 +11,9 @@
   "bugs": {
     "url": "https://github.com/mPokornyETM/vs-code-wincc-oa-projects-viewer/issues"
   },
-  "author": "winccoa-tools-pack",
+  "author": "RichardJanisch",
   "license": "MIT",
-  "icon": "resources/play_industrial_calm_128.png",
+  "icon": "resources/wincc_oa_scriptactions_512.png",
   "keywords": [
     "wincc-oa",
     "scada",
@@ -30,10 +30,11 @@
     "vscode": "^1.80.0"
   },
   "categories": [
-    "Other"
+    "Other",
+    "Programming Languages"
   ],
   "extensionDependencies": [
-    "winccoa-tools-pack.winccoa-core"
+    "RichardJanisch.winccoa-core"
   ],
   "activationEvents": [
     "onStartupFinished"

@@ -1,114 +1,183 @@
 # WinCC OA Script Actions
 
-![Version](https://img.shields.io/badge/version-0.3.0-blue.svg) ![License](https://img.shields.io/badge/license-MIT-green.svg) ![VS Code](https://img.shields.io/badge/VS%20Code-^1.105.0-007ACC.svg)
+<div align="center">
 
-## Execute WinCC OA CTRL scripts directly from Visual Studio Code
+![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![VS Code](https://img.shields.io/badge/VS%20Code-1.107.1-007ACC.svg)
 
-⚠️ _Pre-Release Version - Not all features have been fully tested yet_
+**Execute WinCC OA CTRL scripts directly from Visual Studio Code**
+
+[Features](#-features) • [Installation](#-installation) • [Known Issues](#-known-issues)
+
+</div>
+
+---
+
+> **Disclaimer:**
+> This is the first stable release (v1.0.0) of the WinCC OA Script Actions extension. Not all features are fully implemented and some functions may not work perfectly yet. Please report any issues you encounter.
 
 ---
 
 ## ✨ Features
 
 ### 🚀 Quick Script Execution
-
-Execute WinCC OA CTRL scripts with a single click:
-
-- **Right-click on .ctl files** in Explorer → "Start Script"
-- **Context menu in editor** for open .ctl files → "Start Script"
-- Direct execution via `WCCOActrl.exe` (Windows) or `WCCOActrl` (Linux)
+- **Right-click execution**: Context menu on `.ctl` files in Explorer or editor
+- **Command Palette**: Execute scripts via `Ctrl+Shift+P`
+- **With Arguments**: Execute scripts with custom arguments
+- **Event Connection Control**: Run with or without event manager connection
 - Cross-platform support (Windows/Linux)
 
----
+### ⚡ Performance Options
+- **Fast Execution**: Scripts run with `-n` flag by default (no event connection)
+- **Event Connection Mode**: Execute scripts that need event manager connectivity
+- Configurable execution modes for different use cases
 
-## 🚀 Getting Started
-
-### Installation
-
-1. Open VS Code
-2. Go to Extensions (`Ctrl+Shift+X`)
-3. Search for "WinCC OA Script Actions"
-4. Click Install
-
-### Configuration
-
-Configure the extension to locate your WinCC OA installation and project.
+### 🔧 Flexible Configuration
+- **Auto-Detection**: Automatic project detection via WinCC OA Control extension
+- **Manual Configuration**: Static paths for WinCC OA installation and project
+- Integration with WinCC OA Control extension for seamless project management
 
 ---
 
-## ⚙️ Settings
+## 🚀 Installation
 
-| Setting                             | Default  | Description                                                                                         |
-| ----------------------------------- | -------- | --------------------------------------------------------------------------------------------------- |
-| `winccoa.scriptActions.pathSource`  | `static` | How to determine paths: `static` (manual) or `automatic` (auto-detect, coming soon)                 |
-| `winccoa.scriptActions.installPath` | -        | Path to WinCC OA installation (e.g., `C:/Siemens/Automation/WinCC_OA/3.20` or `/opt/WinCC_OA/3.20`) |
-| `winccoa.scriptActions.projectName` | -        | Your WinCC OA project name                                                                          |
+1. **Install from VSIX** (Recommended):
+   ```bash
+   code --install-extension winccoa-script-actions-1.0.0.vsix
+   ```
+
+2. **Or via VS Code Extensions**:
+   - Open Extensions (`Ctrl+Shift+X`)
+   - Search for "WinCC OA Script Actions"
+   - Click Install
+
+3. **Install Dependencies**:
+   - **WinCC OA Control** extension (optional, for auto-detection)
+
+4. **Configure WinCC OA paths**:
+   - Set `winccoa.scriptActions.installPath` and `winccoa.scriptActions.projectName`
+   - Or use automatic detection with WinCC OA Control extension
 
 ---
 
-## 📋 Usage
+## ⚙️ Configuration
 
-1. Open a `.ctl` file in VS Code
-2. Right-click in the editor or on the file in Explorer
-3. Select **"Start Script"**
-4. The script will be executed via WCCOActrl
+### Essential Settings
 
-### Command Format
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `winccoa.scriptActions.pathSource` | `static` | Path detection: `static` (manual) or `automatic` (via Control extension) |
+| `winccoa.scriptActions.installPath` | - | WinCC OA installation path (e.g., `C:/Siemens/Automation/WinCC_OA/3.20`) |
+| `winccoa.scriptActions.projectName` | - | Your WinCC OA project name |
 
-The extension builds and executes this command:
+### Logging (for debugging)
 
-```bash
-# Windows
-C:/Siemens/Automation/WinCC_OA/3.20/bin/WCCOActrl.exe <full-path-to-script.ctl> -proj <ProjectName>
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `winccoa.scriptActions.logLevel` | `INFO` | Log verbosity: `ERROR`, `WARN`, `INFO`, `DEBUG`, `TRACE` |
 
-# Linux
-/opt/WinCC_OA/3.20/bin/WCCOActrl <full-path-to-script.ctl> -proj <ProjectName>
-```
+💡 **Tip**: Set log level to `DEBUG` when reporting bugs for detailed diagnostics.
+
+---
+
+## 🐛 Known Issues
+
+### Current Limitations
+
+1. **Automatic Path Detection**:
+   - Requires WinCC OA Control extension installed
+   - Falls back to manual configuration if Control extension not available
+
+2. **Output Capture**:
+   - Script output not captured in VS Code terminal
+   - Scripts run in background WinCC OA process
+   - Use `DebugN()` for debugging output (visible in WinCC OA logs)
+
+3. **Parameter Passing**:
+   - Arguments passed as plain strings
+   - Complex data structures not supported
+
+### Reporting Bugs
+
+Found an issue? Please report it with:
+- WinCC OA version
+- Extension version (`1.0.0`)
+- Script example that reproduces the issue
+- Enable `DEBUG` logging and attach log output
+
+[Report Issue on GitHub](https://github.com/winccoa-tools-pack/vscode-winccoa-scriptactions/issues)
+
+---
+
+## 📝 Commands
+
+Access via `Ctrl+Shift+P`:
+
+| Command | Description |
+|---------|-------------|
+| `WinCC OA: Execute Script` | Run current `.ctl` file without event connection (fast) |
+| `WinCC OA: Execute Script with Arguments` | Run script with custom arguments |
+| `WinCC OA: Execute Script with Event Connection` | Run script WITH event manager connection |
+| `WinCC OA: Execute Script with Arguments and Event Connection` | Run script with arguments AND events |
+
+**Right-Click Menu:**
+- Right-click on `.ctl` file → "Start Script" (fast mode, no events)
 
 ---
 
 ## 🛠️ Requirements
 
-- Visual Studio Code 1.105.0 or higher
-- WinCC OA installation with `WCCOActrl` executable
-- Valid WinCC OA project
+- **VS Code:** 1.107.1 or higher
+- **WinCC OA:** 3.19+ with `WCCOActrl` executable
+- **WinCC OA Control:** Extension (optional, for auto-detection)
+- **Valid WinCC OA project**
 
 ---
 
-## ⚠️ Known Limitations
+## 📚 Usage Example
 
-- Automatic path detection is not yet implemented
-- No output capture (script runs in background)
-- No parameter support (executes `main()` function)
+### Command Format
+
+```bash
+# Windows (no event connection, fast)
+C:/Siemens/Automation/WinCC_OA/3.20/bin/WCCOActrl.exe script.ctl -proj ProjectName -n
+
+# Linux (with event connection)
+/opt/WinCC_OA/3.20/bin/WCCOActrl script.ctl -proj ProjectName
+
+# With arguments
+WCCOActrl script.ctl -proj ProjectName -n testCaseId
+```
+
+### Script Example
+
+```cpp
+// File: scripts/utils/Example.ctl
+main(string arg1, int arg2) {
+    DebugN("Argument 1: " + arg1);
+    DebugN("Argument 2: " + arg2);
+}
+```
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**.
 
 ---
 
 ## 📜 Disclaimer
 
-WinCC OA and Siemens are trademarks of Siemens AG. This project is not affiliated with, endorsed by, or sponsored by Siemens AG. This is a community-driven open source project created to enhance the development experience for WinCC OA developers.
+WinCC OA and Siemens are trademarks of Siemens AG. This project is not affiliated with, endorsed by, or sponsored by Siemens AG. This is a community-driven open source project.
 
 ---
 
-## 🔗 Links
+<div align="center">
 
-- [GitHub Repository](https://github.com/winccoa-tools-pack/vscode-winccoa-scriptactions)
-- [Issue Tracker](https://github.com/winccoa-tools-pack/vscode-winccoa-scriptactions/issues)
-- [📦 VS Code Marketplace](https://marketplace.visualstudio.com/search?term=tag%3Awincc-oa&target=VSCode&category=All%20categories&sortBy=Relevance)
-- [SIMATIC WinCC Open Architecture](https://www.siemens.com/global/en/products/automation/industry-software/automation-software/scada/simatic-wincc-oa.html)
-- [SIMATIC WinCC Open Architecture official documentation](https://www.winccoa.com/documentation/WinCCOA/latest/en_US/index.html)
-- [ETM Company](https://www.winccoa.com/company.html)
+Made with ❤️ for the WinCC OA community
 
----
+[GitHub](https://github.com/winccoa-tools-pack/vscode-winccoa-scriptactions) • [Issues](https://github.com/winccoa-tools-pack/vscode-winccoa-scriptactions/issues) • [WinCC OA Docs](https://www.winccoa.com)
 
-Made with ❤️ for and by the WinCC OA community
-
----
-
-## Links
-
-- [GitHub Repository](https://github.com/winccoa-tools-pack/vscode-winccoa-scriptactions)
-- [Issue Tracker](https://github.com/winccoa-tools-pack/vscode-winccoa-scriptactions/issues)
-- [📦 VS Code Marketplace](https://marketplace.visualstudio.com/search?term=tag%3Awincc-oa&target=VSCode&category=All%20categories&sortBy=Relevance)
-- [SIMATIC WinCC Open Architecture](https://www.siemens.com/global/en/products/automation/industry-software/automation-software/scada/simatic-wincc-oa.html)
-- [SIMATIC WinCC Open Architecture official documentation](https://www.winccoa.com/documentation/WinCCOA/latest/en_US/index.html)
-- [ETM Company](https://www.winccoa.com/company.html)
+</div>
