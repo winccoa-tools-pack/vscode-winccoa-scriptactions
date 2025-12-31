@@ -4,8 +4,15 @@ import * as fs from 'fs';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { ExtensionOutputChannel } from './extensionOutput';
+import { getProjectByProjectPath, getRegisteredProjects } from '@winccoa-tools-pack/npm-winccoa-core/utils/winccoa-project-environment';
+import type { ProjEnvProject } from '@winccoa-tools-pack/npm-winccoa-core/types/project/ProjEnvProject';
+import { getWinCCOAInstallationPathByVersion } from '@winccoa-tools-pack/npm-winccoa-core';
+
 
 const execAsync = promisify(exec);
+
+// Global extension context for accessing global state
+let extensionContext: vscode.ExtensionContext;
 
 interface ScriptConfig {
     installPath: string;
@@ -13,6 +20,8 @@ interface ScriptConfig {
 }
 
 export function activate(context: vscode.ExtensionContext) {
+    // Store extension context globally for use in other functions
+    extensionContext = context;
     // Initialize output channel
     const outputChannel = ExtensionOutputChannel.initialize();
     context.subscriptions.push(outputChannel);
@@ -76,7 +85,7 @@ async function executeScript(uri: vscode.Uri): Promise<void> {
         }
 
         // Get configuration
-        const config = await getScriptConfig();
+        const config = await getScriptConfig(extensionContext, filePath);
         if (!config) {
             return; // Error already shown in getScriptConfig
         }
@@ -122,24 +131,123 @@ async function executeScript(uri: vscode.Uri): Promise<void> {
     }
 }
 
-async function getScriptConfig(): Promise<ScriptConfig | null> {
+async function getScriptConfig(context: vscode.ExtensionContext, filePath: string): Promise<ScriptConfig | null> {
     const config = vscode.workspace.getConfiguration('winccoa.scriptActions');
-    const pathSource = config.get<string>('pathSource', 'static');
+    const pathSource = config.get<string>('pathSource', 'automatic');
 
     ExtensionOutputChannel.debug('Configuration', `Path source mode: ${pathSource}`);
 
-    if (pathSource === 'automatic') {
-        // Dummy implementation - will be replaced with npm package later
-        ExtensionOutputChannel.warn('Configuration', 'Automatic path detection not yet implemented');
-        vscode.window.showWarningMessage(
-            'Automatic path detection is not yet implemented. Please use "static" mode and configure paths manually.',
-        );
-        return null;
+    let installPath: string | undefined;
+    let projectName: string | undefined;
+
+    if (pathSource === 'static') {
+        installPath = config.get<string>('installPath');
+        projectName = config.get<string>('projectName');
+    } else if (pathSource === 'automatic') {
+
+        let project = await getProjectByProjectPath(filePath);
+
+        if (!project) {
+            // were not able to determine project automatically
+            // let the user select from registered projects
+            const registeredProjects = await getRegisteredProjects();
+            if (registeredProjects.length === 0) {
+                ExtensionOutputChannel.warn('Configuration', 'No registered WinCC OA projects found');
+                vscode.window.showWarningMessage(
+                    'No registered WinCC OA projects found. Please use "static" mode and configure paths manually.',
+                );
+                return null;
+            }
+
+            // Filter projects based on workspace folders
+            const workspaceFolders = vscode.workspace.workspaceFolders || [];
+            const filteredProjects = registeredProjects.filter((proj: ProjEnvProject) => {
+                const projectDir = proj.getDir();
+                return workspaceFolders.some(folder => 
+                    projectDir.startsWith(folder.uri.fsPath) || 
+                    folder.uri.fsPath.startsWith(projectDir)
+                );
+            });
+
+            // Use filtered projects if any match workspace, otherwise use all
+            const projectsToShow = filteredProjects.length > 0 ? filteredProjects : registeredProjects;
+
+            // Get last selected project from global state
+            const lastSelectedProjectName = context.globalState.get<string>('winccoa.lastSelectedProject');
+
+            // Sort runnable projects first
+            projectsToShow.sort((a: ProjEnvProject, b: ProjEnvProject) => {
+                const aRunnable = a.isRunnable();
+                const bRunnable = b.isRunnable();
+                const lastSelectedA = (lastSelectedProjectName) && a.getId() === lastSelectedProjectName;
+                const lastSelectedB = (lastSelectedProjectName) && b.getId() === lastSelectedProjectName;
+                if (lastSelectedA) return -1;
+                if (lastSelectedB) return 1;
+                if (aRunnable && !bRunnable) return -1;
+                if (!aRunnable && bRunnable) return 1;
+                return a.getName().localeCompare(b.getName());
+            });
+
+            // Create quick pick items with project details
+            const quickPickItems: vscode.QuickPickItem[] = projectsToShow.map((proj: ProjEnvProject) => {
+                const version = proj.getVersion() || 'unknown';
+                const projectDir = proj.getDir();
+                const isRunnable = proj.isRunnable();
+                const lastUsed = (lastSelectedProjectName) && proj.getId() === lastSelectedProjectName;
+                
+                return {
+                    label: proj.getName(),
+                    description: `${version} ${lastUsed ? '(last selected)' : ''} ${isRunnable ? '(runnable)' : '(not runnable)'}`,
+                    detail: projectDir,
+                    // Store project reference for later retrieval
+                    project: proj
+                };
+            });
+
+            
+
+            const selectedQuickPickItem = await vscode.window.showQuickPick(quickPickItems, {
+                placeHolder: 'Select WinCC OA project for the script',
+                matchOnDescription: true,
+                matchOnDetail: true,
+            });
+
+            if (!selectedQuickPickItem) {
+                ExtensionOutputChannel.warn('Configuration', 'No project selected by user');
+                vscode.window.showWarningMessage(
+                    'No WinCC OA project selected. Please use "static" mode and configure paths manually.',
+                );
+                return null;
+            }
+
+            // Remember the selected project for next time
+            await context.globalState.update('winccoa.lastSelectedProject', selectedQuickPickItem.label);
+
+            project = (selectedQuickPickItem as any).project;
+        }
+
+        if (!project) {
+            ExtensionOutputChannel.warn('Configuration', `No project found for script path: ${filePath}`);
+            vscode.window.showWarningMessage(
+                'Could not automatically determine WinCC OA project for the selected script. Please use "static" mode and configure paths manually.',
+            );
+            return null;
+        }
+
+        if (!project.getVersion() === undefined) {
+            // this is unexpected, but handle gracefully
+            ExtensionOutputChannel.warn('Configuration', `Project version unknown for project: ${project.getName()}`);
+            vscode.window.showWarningMessage(
+                `WinCC OA project version unknown for project "${project.getName()}". Please ensure the project is properly registered.`,
+            );
+            return null;
+        }
+        installPath = getWinCCOAInstallationPathByVersion(project.getVersion() || '') || undefined;
+        projectName = project.getId();
+
+        ExtensionOutputChannel.debug('Configuration', `Auto-detected project: ${projectName}, installPath: ${installPath}`);
     }
 
-    // Static mode - get from settings
-    const installPath = config.get<string>('installPath', '');
-    const projectName = config.get<string>('projectName', '');
 
     ExtensionOutputChannel.debug('Configuration', `installPath: ${installPath}, projectName: ${projectName}`);
 

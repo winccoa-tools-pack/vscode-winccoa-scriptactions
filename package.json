@@ -65,12 +65,15 @@
       "properties": {
         "winccoa.scriptActions.pathSource": {
           "type": "string",
-          "enum": ["static", "automatic"],
-          "default": "static",
+          "enum": [
+            "static",
+            "automatic"
+          ],
+          "default": "automatic",
           "description": "How to determine WinCC OA installation and project paths",
           "enumDescriptions": [
             "Use manually configured paths (below)",
-            "Auto-detect from workspace (requires npm package - coming soon)"
+            "Auto-detect from workspace"
           ]
         },
         "winccoa.scriptActions.installPath": {
@@ -87,7 +90,13 @@
         },
         "winccoaScriptActions.logLevel": {
           "type": "string",
-          "enum": ["ERROR", "WARN", "INFO", "DEBUG", "TRACE"],
+          "enum": [
+            "ERROR",
+            "WARN",
+            "INFO",
+            "DEBUG",
+            "TRACE"
+          ],
           "default": "INFO",
           "description": "Log level for the extension output channel",
           "enumDescriptions": [
@@ -109,7 +118,6 @@
     "lint:fix": "eslint \"src/**/*.ts\" --fix",
     "lint:md": "markdownlint \"**/*.md\" --ignore node_modules",
     "lint:md:fix": "markdownlint \"**/*.md\" --ignore node_modules --fix",
-    
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\"",
     "format:md": "prettier --write \"**/*.md\"",
@@ -124,18 +132,21 @@
     "vscode:prepublish": "npm run compile"
   },
   "devDependencies": {
-    "typescript": "^5.2.0",
-    "@types/vscode": "^1.80.0",
-    "@types/node": "^24.10.2",
     "@types/mocha": "^10.0.6",
-    "@vscode/vsce": "^3.7.1",
-    "@vscode/test-electron": "^2.3.9",
-    "mocha": "^11.7.5",
-    "glob": "^13.0.0",
-    "eslint": "^8.50.0",
-    "@typescript-eslint/parser": "^6.10.0",
+    "@types/node": "^24.10.2",
+    "@types/vscode": "^1.80.0",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
+    "@typescript-eslint/parser": "^6.10.0",
+    "@vscode/test-electron": "^2.3.9",
+    "@vscode/vsce": "^3.7.1",
+    "eslint": "^8.50.0",
+    "glob": "^13.0.0",
+    "markdownlint-cli": "^0.47.0",
+    "mocha": "^11.7.5",
     "prettier": "^2.8.8",
-    "markdownlint-cli": "^0.36.0"
+    "typescript": "^5.2.0"
+  },
+  "dependencies": {
+    "@winccoa-tools-pack/npm-winccoa-core": "^1.1.0"
   }
 }
