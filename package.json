@@ -147,6 +147,6 @@
     "typescript": "^5.2.0"
   },
   "dependencies": {
-    "@winccoa-tools-pack/npm-winccoa-core": "^1.1.0"
+    "@winccoa-tools-pack/npm-winccoa-core": "^0.1.0"
   }
 }
