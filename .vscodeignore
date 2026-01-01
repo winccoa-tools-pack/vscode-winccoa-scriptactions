@@ -13,3 +13,5 @@ src/**
 tsconfig.json
 tsconfig.tsbuildinfo
 node_modules/**
+!images/**/*.gif
+!resources/**/*.gif

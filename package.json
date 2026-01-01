@@ -2,7 +2,7 @@
   "name": "winccoa-script-actions",
   "displayName": "WinCC OA Script Actions",
   "description": "Execute WinCC OA CTRL scripts directly from VS Code",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "publisher": "RichardJanisch",
   "repository": {
     "type": "git",
@@ -34,7 +34,7 @@
     "Programming Languages"
   ],
   "extensionDependencies": [
-    "RichardJanisch.winccoa-control"
+    "RichardJanisch.winccoa-project-admin"
   ],
   "activationEvents": [
     "onStartupFinished"
@@ -85,7 +85,7 @@
         "winccoa.scriptActions.pathSource": {
           "type": "string",
           "enum": ["static", "automatic"],
-          "default": "static",
+          "default": "automatic",
           "description": "How to determine WinCC OA installation and project paths",
           "enumDescriptions": [
             "Use manually configured paths (below)",

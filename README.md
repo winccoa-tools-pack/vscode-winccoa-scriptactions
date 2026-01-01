@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-1.0.2-blue.svg)
+![Version](https://img.shields.io/badge/version-1.0.3-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![VS Code](https://img.shields.io/badge/VS%20Code-1.107.1-007ACC.svg)
 
@@ -15,7 +15,13 @@
 ---
 
 > **Disclaimer:**
-> This is the first stable release (v1.0.0) of the WinCC OA Script Actions extension. Not all features are fully implemented and some functions may not work perfectly yet. Please report any issues you encounter.
+> This is the first stable release (v1.0.3) of the WinCC OA Script Actions extension. Not all features are fully implemented and some functions may not work perfectly yet. Please report any issues you encounter.
+
+---
+
+## 🎬 See It In Action
+
+![WinCC OA Script Actions Demo](https://github.com/winccoa-tools-pack/vscode-winccoa-scriptactions/blob/develop/images/Animation.gif?raw=true)
 
 ---
 
@@ -40,34 +46,13 @@
 
 ---
 
-## 🚀 Installation
-
-1. **Install from VSIX** (Recommended):
-   ```bash
-   code --install-extension winccoa-script-actions-1.0.0.vsix
-   ```
-
-2. **Or via VS Code Extensions**:
-   - Open Extensions (`Ctrl+Shift+X`)
-   - Search for "WinCC OA Script Actions"
-   - Click Install
-
-3. **Install Dependencies**:
-   - **WinCC OA Control** extension (optional, for auto-detection)
-
-4. **Configure WinCC OA paths**:
-   - Set `winccoa.scriptActions.installPath` and `winccoa.scriptActions.projectName`
-   - Or use automatic detection with WinCC OA Control extension
-
----
-
 ## ⚙️ Configuration
 
 ### Essential Settings
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| `winccoa.scriptActions.pathSource` | `static` | Path detection: `static` (manual) or `automatic` (via Control extension) |
+| `winccoa.scriptActions.pathSource` | `automatic` | Path detection: `static` (manual) or `automatic` (via Control extension) |
 | `winccoa.scriptActions.installPath` | - | WinCC OA installation path (e.g., `C:/Siemens/Automation/WinCC_OA/3.20`) |
 | `winccoa.scriptActions.projectName` | - | Your WinCC OA project name |
 
