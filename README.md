@@ -21,7 +21,7 @@
 
 ## 🎬 See It In Action
 
-![WinCC OA Script Actions Demo](resources/Animation.gif)
+![WinCC OA Script Actions Demo](https://github.com/winccoa-tools-pack/vscode-winccoa-scriptactions/blob/develop/images/Animation.gif?raw=true)
 
 ---
 
