@@ -273,7 +273,7 @@ async function getScriptConfig(): Promise<ScriptConfig | null> {
 
     if (pathSource === 'automatic') {
         // Get project info from Core extension
-        const coreExtension = vscode.extensions.getExtension('RichardJanisch.winccoa-control');
+        const coreExtension = vscode.extensions.getExtension('RichardJanisch.winccoa-project-admin');
         
         if (!coreExtension) {
             ExtensionOutputChannel.error('Configuration', 'WinCC OA Core extension not found');
