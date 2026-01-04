@@ -14,8 +14,8 @@
 
 ---
 
-> **Disclaimer:**
-> This is the first stable release (v1.0.3) of the WinCC OA Script Actions extension. Not all features are fully implemented and some functions may not work perfectly yet. Please report any issues you encounter.
+> **Disclaimer:** This is one of the first releases of the WinCC OA Script Actions extension. Some edge cases may not be fully covered yet. Please check the [Known Issues](#-known-issues) section for workarounds if you encounter problems.  
+> **Tip:** If the extension doesn't work as expected, try `Ctrl+Shift+P` → `Reload Window` to refresh.
 
 ---
 
@@ -144,6 +144,26 @@ main(string arg1, int arg2) {
     DebugN("Argument 2: " + arg2);
 }
 ```
+
+---
+
+## 🐛 Known Issues
+
+### Performance
+
+**Windows Performance:**  
+The extension may run slower on Windows with longer loading times. Linux performs significantly better.
+
+**Large Projects:**  
+Very large projects may experience slower script execution startup times.
+
+### General
+
+**Extension Not Responding:**  
+If the extension doesn't work as expected (script execution fails, project detection issues), reload VS Code:  
+1. Press `Ctrl+Shift+P`
+2. Type and select `Reload Window`
+3. This refreshes the extension
 
 ---
 
