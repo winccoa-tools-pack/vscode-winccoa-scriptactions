@@ -140,11 +140,29 @@ npm run compile
 make test-local  # Erstellt VSIX und öffnet Test-Extension-Host
 ```
 
-## Versionsstände (Stand: 2025-12-26)
-- **LogViewer**: v0.2.3 - UI Light Mode Fixes
-- **Script Actions**: v0.3.1 - Plain arguments (keine `-lflag` Präfixe)
-- **Test Explorer**: v0.2.2 - Single test execution + Performance
-- **Core Extension**: v0.2.2 - Auto-select first project + startup fix
+## Makefile Automation
+
+### Version Badge Auto-Update (seit 2026-01-04)
+Der `make package` Target aktualisiert automatisch das Version Badge in README.md:
+
+```makefile
+package: build
+	@echo "Packaging production release..."
+	@-$(MKDIR) $(BIN_DIR) 2>nul || echo "" >nul
+	@echo "Updating version badge in README.md..."
+	@node -e "const fs=require('fs'); let c=fs.readFileSync('README.md','utf8'); c=c.replace(/!\\[Version\\]\\(https:\\/\\/img\\.shields\\.io\\/badge\\/version-[^)]*\\)/,'![Version](https://img.shields.io/badge/version-$(VERSION)-blue.svg)'); fs.writeFileSync('README.md',c);"
+	@$(VSCE) package -o $(BIN_DIR)/$(EXTENSION_NAME)-$(VERSION).vsix
+```
+
+**NICHT manuell Version Badge in README.md ändern** - wird automatisch bei packaging aktualisiert!
+
+## Versionsstände (Stand: 2026-01-04)
+- **Script Actions**: v0.4.0 - Default commands + version badge automation
+- **LogViewer**: v1.0.3 - Backend file watching + version badge automation
+- **CTL Language**: v1.2.0 - Scope-aware rename + keywords + version badge automation
+- **Test Explorer**: v0.2.4 - Cancel/Stop + version badge automation
+- **Project Admin**: Latest - Version badge automation
+- **Core Extension**: v0.2.3 - PMON start/stop sequence fix
 
 ## Zusammenarbeit mit GitHub Copilot
 

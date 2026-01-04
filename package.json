@@ -2,7 +2,7 @@
   "name": "winccoa-script-actions",
   "displayName": "WinCC OA Script Actions",
   "description": "Execute WinCC OA CTRL scripts directly from VS Code",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "publisher": "RichardJanisch",
   "repository": {
     "type": "git",
@@ -77,6 +77,13 @@
           "when": "resourceExtname == '.ctl'",
           "group": "winccoa@1"
         }
+      ],
+      "editor/title/run": [
+        {
+          "command": "winccoa.executeScript",
+          "when": "resourceExtname == '.ctl'",
+          "group": "navigation@1"
+        }
       ]
     },
     "configuration": {
@@ -84,7 +91,10 @@
       "properties": {
         "winccoa.scriptActions.pathSource": {
           "type": "string",
-          "enum": ["static", "automatic"],
+          "enum": [
+            "static",
+            "automatic"
+          ],
           "default": "automatic",
           "description": "How to determine WinCC OA installation and project paths",
           "enumDescriptions": [
@@ -106,7 +116,13 @@
         },
         "winccoaScriptActions.logLevel": {
           "type": "string",
-          "enum": ["ERROR", "WARN", "INFO", "DEBUG", "TRACE"],
+          "enum": [
+            "ERROR",
+            "WARN",
+            "INFO",
+            "DEBUG",
+            "TRACE"
+          ],
           "default": "INFO",
           "description": "Log level for the extension output channel",
           "enumDescriptions": [
@@ -128,7 +144,6 @@
     "lint:fix": "eslint \"src/**/*.ts\" --fix",
     "lint:md": "markdownlint \"**/*.md\" --ignore node_modules",
     "lint:md:fix": "markdownlint \"**/*.md\" --ignore node_modules --fix",
-    
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\"",
     "format:md": "prettier --write \"**/*.md\"",
@@ -143,18 +158,18 @@
     "vscode:prepublish": "npm run compile"
   },
   "devDependencies": {
-    "typescript": "^5.2.0",
-    "@types/vscode": "^1.80.0",
-    "@types/node": "^24.10.2",
     "@types/mocha": "^10.0.6",
-    "@vscode/vsce": "^3.7.1",
-    "@vscode/test-electron": "^2.3.9",
-    "mocha": "^11.7.5",
-    "glob": "^13.0.0",
-    "eslint": "^8.50.0",
-    "@typescript-eslint/parser": "^6.10.0",
+    "@types/node": "^24.10.2",
+    "@types/vscode": "^1.80.0",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
+    "@typescript-eslint/parser": "^6.10.0",
+    "@vscode/test-electron": "^2.3.9",
+    "@vscode/vsce": "^3.7.1",
+    "eslint": "^8.50.0",
+    "glob": "^13.0.0",
+    "markdownlint-cli": "^0.47.0",
+    "mocha": "^11.7.5",
     "prettier": "^2.8.8",
-    "markdownlint-cli": "^0.36.0"
+    "typescript": "^5.2.0"
   }
 }
