@@ -37,7 +37,7 @@ export function activate(context: vscode.ExtensionContext) {
         })
     );
 
-    // Register command (default: -n flag for faster execution without event connection)
+    // Register command (default: WITH event connection for full WinCC OA integration)
     const executeScriptCommand = vscode.commands.registerCommand(
         'winccoa.executeScript',
         async (uri?: vscode.Uri) => {
@@ -54,13 +54,13 @@ export function activate(context: vscode.ExtensionContext) {
                 return;
             }
 
-            await executeScript(uri, undefined, false); // false = use -n flag
+            await executeScript(uri, undefined, true); // true = WITH event connection (default)
         },
     );
 
     context.subscriptions.push(executeScriptCommand);
 
-    // Register command with arguments (default: -n flag)
+    // Register command with arguments (default: WITH event connection)
     const executeScriptWithArgsCommand = vscode.commands.registerCommand(
         'winccoa.executeScriptWithArgs',
         async (uri?: vscode.Uri, args?: string) => {
@@ -77,7 +77,7 @@ export function activate(context: vscode.ExtensionContext) {
                 return;
             }
 
-            await executeScriptWithArgs(uri, args, true); // false = use -n flag
+            await executeScriptWithArgs(uri, args, true); // true = WITH event connection (default)
         },
     );
 
