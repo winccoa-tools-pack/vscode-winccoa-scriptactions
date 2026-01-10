@@ -77,7 +77,7 @@ export function activate(context: vscode.ExtensionContext) {
                 return;
             }
 
-            await executeScriptWithArgs(uri, args, false); // false = use -n flag
+            await executeScriptWithArgs(uri, args, true); // false = use -n flag
         },
     );
 
