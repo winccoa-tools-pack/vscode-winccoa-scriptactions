@@ -2,7 +2,7 @@
   "name": "winccoa-script-actions",
   "displayName": "WinCC OA Script Actions",
   "description": "Execute WinCC OA CTRL scripts directly from VS Code",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "publisher": "RichardJanisch",
   "repository": {
     "type": "git",
@@ -151,6 +151,7 @@
     "style-check": "npm run lint && npm run format:check && npm run lint:md && npm run format:md:check",
     "style-fix": "npm run lint:fix && npm run format && npm run lint:md:fix && npm run format:md",
     "test": "npm run style-check && npm run compile && node ./dist/test/runTest.js",
+    "test:unit": "npm test",
     "test:integration": "npm run build && node ./dist/test/runTest.js",
     "ci:integration": "npm ci && npm run test:integration",
     "watch": "tsc --build --watch",

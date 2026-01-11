@@ -28,6 +28,7 @@
 ## ✨ Features
 
 ### 🚀 Quick Script Execution
+
 - **Right-click execution**: Context menu on `.ctl` files in Explorer or editor
 - **Command Palette**: Execute scripts via `Ctrl+Shift+P`
 - **With Arguments**: Execute scripts with custom arguments
@@ -35,11 +36,13 @@
 - Cross-platform support (Windows/Linux)
 
 ### ⚡ Performance Options
+
 - **Fast Execution**: Scripts run with `-n` flag by default (no event connection)
 - **Event Connection Mode**: Execute scripts that need event manager connectivity
 - Configurable execution modes for different use cases
 
 ### 🔧 Flexible Configuration
+
 - **Auto-Detection**: Automatic project detection via WinCC OA Control extension
 - **Manual Configuration**: Static paths for WinCC OA installation and project
 - Integration with WinCC OA Control extension for seamless project management
@@ -50,17 +53,17 @@
 
 ### Essential Settings
 
-| Setting | Default | Description |
-|---------|---------|-------------|
-| `winccoa.scriptActions.pathSource` | `automatic` | Path detection: `static` (manual) or `automatic` (via Control extension) |
-| `winccoa.scriptActions.installPath` | - | WinCC OA installation path (e.g., `C:/Siemens/Automation/WinCC_OA/3.20`) |
-| `winccoa.scriptActions.projectName` | - | Your WinCC OA project name |
+| Setting                             | Default     | Description                                                              |
+| ----------------------------------- | ----------- | ------------------------------------------------------------------------ |
+| `winccoa.scriptActions.pathSource`  | `automatic` | Path detection: `static` (manual) or `automatic` (via Control extension) |
+| `winccoa.scriptActions.installPath` | -           | WinCC OA installation path (e.g., `C:/Siemens/Automation/WinCC_OA/3.20`) |
+| `winccoa.scriptActions.projectName` | -           | Your WinCC OA project name                                               |
 
 ### Logging (for debugging)
 
-| Setting | Default | Description |
-|---------|---------|-------------|
-| `winccoa.scriptActions.logLevel` | `INFO` | Log verbosity: `ERROR`, `WARN`, `INFO`, `DEBUG`, `TRACE` |
+| Setting                          | Default | Description                                              |
+| -------------------------------- | ------- | -------------------------------------------------------- |
+| `winccoa.scriptActions.logLevel` | `INFO`  | Log verbosity: `ERROR`, `WARN`, `INFO`, `DEBUG`, `TRACE` |
 
 💡 **Tip**: Set log level to `DEBUG` when reporting bugs for detailed diagnostics.
 
@@ -71,10 +74,12 @@
 ### Current Limitations
 
 1. **Automatic Path Detection**:
+
    - Requires WinCC OA Control extension installed
    - Falls back to manual configuration if Control extension not available
 
 2. **Output Capture**:
+
    - Script output not captured in VS Code terminal
    - Scripts run in background WinCC OA process
    - Use `DebugN()` for debugging output (visible in WinCC OA logs)
@@ -86,6 +91,7 @@
 ### Reporting Bugs
 
 Found an issue? Please report it with:
+
 - WinCC OA version
 - Extension version (`1.0.0`)
 - Script example that reproduces the issue
@@ -99,14 +105,15 @@ Found an issue? Please report it with:
 
 Access via `Ctrl+Shift+P`:
 
-| Command | Description |
-|---------|-------------|
-| `WinCC OA: Execute Script` | Run current `.ctl` file without event connection (fast) |
-| `WinCC OA: Execute Script with Arguments` | Run script with custom arguments |
-| `WinCC OA: Execute Script with Event Connection` | Run script WITH event manager connection |
-| `WinCC OA: Execute Script with Arguments and Event Connection` | Run script with arguments AND events |
+| Command                                                        | Description                                             |
+| -------------------------------------------------------------- | ------------------------------------------------------- |
+| `WinCC OA: Execute Script`                                     | Run current `.ctl` file without event connection (fast) |
+| `WinCC OA: Execute Script with Arguments`                      | Run script with custom arguments                        |
+| `WinCC OA: Execute Script with Event Connection`               | Run script WITH event manager connection                |
+| `WinCC OA: Execute Script with Arguments and Event Connection` | Run script with arguments AND events                    |
 
 **Right-Click Menu:**
+
 - Right-click on `.ctl` file → "Start Script" (fast mode, no events)
 
 ---
@@ -147,7 +154,7 @@ main(string arg1, int arg2) {
 
 ---
 
-## 🐛 Known Issues
+## � Troubleshooting
 
 ### Performance
 
@@ -160,7 +167,8 @@ Very large projects may experience slower script execution startup times.
 ### General
 
 **Extension Not Responding:**  
-If the extension doesn't work as expected (script execution fails, project detection issues), reload VS Code:  
+If the extension doesn't work as expected (script execution fails, project detection issues), reload VS Code:
+
 1. Press `Ctrl+Shift+P`
 2. Type and select `Reload Window`
 3. This refreshes the extension

@@ -2,5 +2,8 @@
   "default": true,
   "MD013": false,
   "MD012": false,
-    "MD033": { "allowed_elements": ["center"]}
+  "MD024": { "siblings_only": true },
+  "MD033": { "allowed_elements": ["div", "center"] },
+  "MD036": false,
+  "MD051": false
 }

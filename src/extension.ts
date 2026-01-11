@@ -22,26 +22,29 @@ export function activate(context: vscode.ExtensionContext) {
     ExtensionOutputChannel.debug('Extension', `VS Code Version: ${vscode.version}`);
 
     // Setup Core extension integration if in automatic mode
-    setupCoreExtensionIntegration(context);
+    setupCoreExtensionIntegration();
 
     // Watch for configuration changes
     context.subscriptions.push(
-        vscode.workspace.onDidChangeConfiguration(e => {
+        vscode.workspace.onDidChangeConfiguration((e) => {
             if (e.affectsConfiguration('winccoaScriptActions.logLevel')) {
                 ExtensionOutputChannel.updateLogLevel();
             }
             if (e.affectsConfiguration('winccoa.scriptActions.pathSource')) {
                 // Re-setup Core integration when mode changes
-                setupCoreExtensionIntegration(context);
+                setupCoreExtensionIntegration();
             }
-        })
+        }),
     );
 
     // Register command (default: WITH event connection for full WinCC OA integration)
     const executeScriptCommand = vscode.commands.registerCommand(
         'winccoa.executeScript',
         async (uri?: vscode.Uri) => {
-            ExtensionOutputChannel.debug('Command', `executeScript called with URI: ${uri?.fsPath || 'none'}`);
+            ExtensionOutputChannel.debug(
+                'Command',
+                `executeScript called with URI: ${uri?.fsPath || 'none'}`,
+            );
 
             // If no URI provided (e.g., from command palette), use active editor
             if (!uri && vscode.window.activeTextEditor) {
@@ -64,7 +67,12 @@ export function activate(context: vscode.ExtensionContext) {
     const executeScriptWithArgsCommand = vscode.commands.registerCommand(
         'winccoa.executeScriptWithArgs',
         async (uri?: vscode.Uri, args?: string) => {
-            ExtensionOutputChannel.debug('Command', `executeScriptWithArgs called with URI: ${uri?.fsPath || 'none'}, args: ${args || 'none'}`);
+            ExtensionOutputChannel.debug(
+                'Command',
+                `executeScriptWithArgs called with URI: ${uri?.fsPath || 'none'}, args: ${
+                    args || 'none'
+                }`,
+            );
 
             // If no URI provided (e.g., from command palette), use active editor
             if (!uri && vscode.window.activeTextEditor) {
@@ -87,7 +95,10 @@ export function activate(context: vscode.ExtensionContext) {
     const executeScriptWithEventConnectionCommand = vscode.commands.registerCommand(
         'winccoa.executeScriptWithEventConnection',
         async (uri?: vscode.Uri) => {
-            ExtensionOutputChannel.debug('Command', `executeScriptWithEventConnection called with URI: ${uri?.fsPath || 'none'}`);
+            ExtensionOutputChannel.debug(
+                'Command',
+                `executeScriptWithEventConnection called with URI: ${uri?.fsPath || 'none'}`,
+            );
 
             // If no URI provided (e.g., from command palette), use active editor
             if (!uri && vscode.window.activeTextEditor) {
@@ -110,7 +121,12 @@ export function activate(context: vscode.ExtensionContext) {
     const executeScriptWithArgsAndEventConnectionCommand = vscode.commands.registerCommand(
         'winccoa.executeScriptWithArgsAndEventConnection',
         async (uri?: vscode.Uri, args?: string) => {
-            ExtensionOutputChannel.debug('Command', `executeScriptWithArgsAndEventConnection called with URI: ${uri?.fsPath || 'none'}, args: ${args || 'none'}`);
+            ExtensionOutputChannel.debug(
+                'Command',
+                `executeScriptWithArgsAndEventConnection called with URI: ${
+                    uri?.fsPath || 'none'
+                }, args: ${args || 'none'}`,
+            );
 
             // If no URI provided (e.g., from command palette), use active editor
             if (!uri && vscode.window.activeTextEditor) {
@@ -129,22 +145,31 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(executeScriptWithArgsAndEventConnectionCommand);
 
-    ExtensionOutputChannel.success('Extension', 'Commands registered: winccoa.executeScript, winccoa.executeScriptWithArgs, winccoa.executeScriptWithEventConnection, winccoa.executeScriptWithArgsAndEventConnection');
+    ExtensionOutputChannel.success(
+        'Extension',
+        'Commands registered: winccoa.executeScript, winccoa.executeScriptWithArgs, winccoa.executeScriptWithEventConnection, winccoa.executeScriptWithArgsAndEventConnection',
+    );
 }
 
-async function setupCoreExtensionIntegration(context: vscode.ExtensionContext) {
+async function setupCoreExtensionIntegration() {
     const config = vscode.workspace.getConfiguration('winccoa.scriptActions');
     const pathSource = config.get<string>('pathSource', 'static');
 
     if (pathSource !== 'automatic') {
-        ExtensionOutputChannel.debug('CoreIntegration', 'Static mode - Core extension integration disabled');
+        ExtensionOutputChannel.debug(
+            'CoreIntegration',
+            'Static mode - Core extension integration disabled',
+        );
         return;
     }
 
     const coreExtension = vscode.extensions.getExtension('winccoa-tools-pack.winccoa-core');
-    
+
     if (!coreExtension) {
-        ExtensionOutputChannel.warn('CoreIntegration', 'WinCC OA Core extension not found - automatic mode unavailable');
+        ExtensionOutputChannel.warn(
+            'CoreIntegration',
+            'WinCC OA Core extension not found - automatic mode unavailable',
+        );
         return;
     }
 
@@ -154,11 +179,20 @@ async function setupCoreExtensionIntegration(context: vscode.ExtensionContext) {
     }
 
     const coreApi = coreExtension.exports;
-    
+
     // Subscribe to project changes
-    coreApi.onDidChangeProject((project: any) => {
-        if (project) {
-            ExtensionOutputChannel.info('CoreIntegration', `Project changed: ${project.name} (${project.oaInstallPath})`);
+    coreApi.onDidChangeProject((project: unknown) => {
+        if (
+            project &&
+            typeof project === 'object' &&
+            'name' in project &&
+            'oaInstallPath' in project
+        ) {
+            const proj = project as { name: string; oaInstallPath: string };
+            ExtensionOutputChannel.info(
+                'CoreIntegration',
+                `Project changed: ${proj.name} (${proj.oaInstallPath})`,
+            );
         } else {
             ExtensionOutputChannel.info('CoreIntegration', 'No project selected');
         }
@@ -166,24 +200,36 @@ async function setupCoreExtensionIntegration(context: vscode.ExtensionContext) {
 
     const currentProject = coreApi.getCurrentProject();
     if (currentProject) {
-        ExtensionOutputChannel.info('CoreIntegration', `Current project: ${currentProject.name} (${currentProject.oaInstallPath})`);
+        ExtensionOutputChannel.info(
+            'CoreIntegration',
+            `Current project: ${currentProject.name} (${currentProject.oaInstallPath})`,
+        );
     } else {
         ExtensionOutputChannel.debug('CoreIntegration', 'No project currently selected');
     }
 }
 
-async function executeScript(uri: vscode.Uri, args?: string, withEventConnection: boolean = false): Promise<void> {
+async function executeScript(
+    uri: vscode.Uri,
+    args?: string,
+    withEventConnection: boolean = false,
+): Promise<void> {
     try {
         const filePath = uri.fsPath;
-        const eventConnStr = withEventConnection ? 'with event connection' : 'without event connection (-n)';
-        const logMessage = args ? 
-            `Executing script with args (${eventConnStr}): ${path.basename(filePath)} ${args}` : 
-            `Executing script (${eventConnStr}): ${path.basename(filePath)}`;
+        const eventConnStr = withEventConnection
+            ? 'with event connection'
+            : 'without event connection (-n)';
+        const logMessage = args
+            ? `Executing script with args (${eventConnStr}): ${path.basename(filePath)} ${args}`
+            : `Executing script (${eventConnStr}): ${path.basename(filePath)}`;
         ExtensionOutputChannel.info('ScriptExecution', logMessage);
 
         // Validate file extension
         if (!filePath.toLowerCase().endsWith('.ctl')) {
-            ExtensionOutputChannel.error('ScriptExecution', 'Invalid file type - only .ctl files supported');
+            ExtensionOutputChannel.error(
+                'ScriptExecution',
+                'Invalid file type - only .ctl files supported',
+            );
             vscode.window.showErrorMessage('Only .ctl files can be executed.');
             return;
         }
@@ -206,7 +252,9 @@ async function executeScript(uri: vscode.Uri, args?: string, withEventConnection
         ExtensionOutputChannel.debug('ScriptExecution', `Command: ${command}`);
 
         // Show progress
-        const progressTitle = args ? `Executing ${path.basename(filePath)} with args...` : `Executing ${path.basename(filePath)}...`;
+        const progressTitle = args
+            ? `Executing ${path.basename(filePath)} with args...`
+            : `Executing ${path.basename(filePath)}...`;
         await vscode.window.withProgress(
             {
                 location: vscode.ProgressLocation.Notification,
@@ -225,38 +273,56 @@ async function executeScript(uri: vscode.Uri, args?: string, withEventConnection
                         ExtensionOutputChannel.info('ScriptExecution', `stdout: ${stdout}`);
                     }
 
-                    ExtensionOutputChannel.success('ScriptExecution', `Script started: ${path.basename(filePath)}`);
+                    ExtensionOutputChannel.success(
+                        'ScriptExecution',
+                        `Script started: ${path.basename(filePath)}`,
+                    );
                     vscode.window.showInformationMessage(
                         `✓ Script started: ${path.basename(filePath)}`,
                     );
                 } catch (err: unknown) {
                     const error = err instanceof Error ? err : new Error(String(err));
-                    ExtensionOutputChannel.error('ScriptExecution', `Execution failed: ${error.message}`, error);
+                    ExtensionOutputChannel.error(
+                        'ScriptExecution',
+                        `Execution failed: ${error.message}`,
+                        error,
+                    );
                     vscode.window.showErrorMessage(`✗ Script execution failed: ${error.message}`);
                 }
             },
         );
     } catch (err: unknown) {
         const error = err instanceof Error ? err : new Error(String(err));
-        ExtensionOutputChannel.error('ScriptExecution', `Unexpected error: ${error.message}`, error);
+        ExtensionOutputChannel.error(
+            'ScriptExecution',
+            `Unexpected error: ${error.message}`,
+            error,
+        );
         vscode.window.showErrorMessage(`Error: ${error.message}`);
     }
 }
 
-async function executeScriptWithArgs(uri: vscode.Uri, args?: string, withEventConnection: boolean = false): Promise<void> {
+async function executeScriptWithArgs(
+    uri: vscode.Uri,
+    args?: string,
+    withEventConnection: boolean = false,
+): Promise<void> {
     let finalArgs = args;
-    
+
     // If no args provided programmatically, prompt user for arguments
     if (finalArgs === undefined) {
         finalArgs = await vscode.window.showInputBox({
             prompt: 'Enter script arguments (space-separated)',
             placeHolder: 'arg1 arg2 arg3',
-            value: ''
+            value: '',
         });
 
         // User cancelled
         if (finalArgs === undefined) {
-            ExtensionOutputChannel.info('ScriptExecution', 'Script execution with args cancelled by user');
+            ExtensionOutputChannel.info(
+                'ScriptExecution',
+                'Script execution with args cancelled by user',
+            );
             return;
         }
     }
@@ -273,8 +339,10 @@ async function getScriptConfig(): Promise<ScriptConfig | null> {
 
     if (pathSource === 'automatic') {
         // Get project info from Core extension
-        const coreExtension = vscode.extensions.getExtension('RichardJanisch.winccoa-project-admin');
-        
+        const coreExtension = vscode.extensions.getExtension(
+            'RichardJanisch.winccoa-project-admin',
+        );
+
         if (!coreExtension) {
             ExtensionOutputChannel.error('Configuration', 'WinCC OA Core extension not found');
             vscode.window.showErrorMessage(
@@ -292,14 +360,20 @@ async function getScriptConfig(): Promise<ScriptConfig | null> {
         const currentProject = coreApi.getCurrentProject();
 
         if (!currentProject) {
-            ExtensionOutputChannel.warn('Configuration', 'No WinCC OA project selected in Core extension');
+            ExtensionOutputChannel.warn(
+                'Configuration',
+                'No WinCC OA project selected in Core extension',
+            );
             vscode.window.showWarningMessage(
                 'No WinCC OA project selected. Please select a project using the WinCC OA status bar.',
             );
             return null;
         }
 
-        ExtensionOutputChannel.debug('Configuration', `Automatic mode - Project: ${currentProject.name}, Install: ${currentProject.oaInstallPath}`);
+        ExtensionOutputChannel.debug(
+            'Configuration',
+            `Automatic mode - Project: ${currentProject.name}, Install: ${currentProject.oaInstallPath}`,
+        );
 
         return {
             installPath: currentProject.oaInstallPath,
@@ -311,7 +385,10 @@ async function getScriptConfig(): Promise<ScriptConfig | null> {
     const installPath = config.get<string>('installPath', '');
     const projectName = config.get<string>('projectName', '');
 
-    ExtensionOutputChannel.debug('Configuration', `installPath: ${installPath}, projectName: ${projectName}`);
+    ExtensionOutputChannel.debug(
+        'Configuration',
+        `installPath: ${installPath}, projectName: ${projectName}`,
+    );
 
     // Validate configuration
     if (!installPath) {
@@ -335,7 +412,10 @@ async function getScriptConfig(): Promise<ScriptConfig | null> {
 
     // Check if installation path exists
     if (!fs.existsSync(normalizedInstallPath)) {
-        ExtensionOutputChannel.warn('Configuration', `Installation path does not exist: ${normalizedInstallPath}`);
+        ExtensionOutputChannel.warn(
+            'Configuration',
+            `Installation path does not exist: ${normalizedInstallPath}`,
+        );
         vscode.window.showWarningMessage(
             `WinCC OA installation path does not exist: ${normalizedInstallPath}`,
         );
@@ -344,7 +424,7 @@ async function getScriptConfig(): Promise<ScriptConfig | null> {
 
     ExtensionOutputChannel.info(
         'Configuration',
-        `Configuration loaded - Project: ${projectName}, Install: ${normalizedInstallPath}`
+        `Configuration loaded - Project: ${projectName}, Install: ${normalizedInstallPath}`,
     );
 
     return {
@@ -353,7 +433,12 @@ async function getScriptConfig(): Promise<ScriptConfig | null> {
     };
 }
 
-function buildExecutionCommand(scriptPath: string, config: ScriptConfig, args?: string, withEventConnection: boolean = false): string {
+function buildExecutionCommand(
+    scriptPath: string,
+    config: ScriptConfig,
+    args?: string,
+    withEventConnection: boolean = false,
+): string {
     const platform = process.platform;
     const isWindows = platform === 'win32';
 

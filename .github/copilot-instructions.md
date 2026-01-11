@@ -34,6 +34,7 @@ vscode-winccoa-core (Zentrale Services)
 ```
 
 **Wichtige Beziehungen:**
+
 - **Core** → Alle anderen Extensions (optional oder required)
 - **Script Actions** → Test Explorer (für Test-Ausführung)
 - **LogViewer** → Core (für automatische Projekt-Erkennung, optional)
@@ -41,21 +42,22 @@ vscode-winccoa-core (Zentrale Services)
 
 ### Extension-Rollen
 
-| Extension | Rolle | Status |
-|-----------|-------|--------|
-| **Core** | Zentrale Projekt-Verwaltung, Status Bar | v0.2.2 |
-| **LogViewer** | Echtzeit Log-Monitoring | v0.2.3 |
-| **Script Actions** | Script-Ausführung mit Argumenten | v0.3.1 |
-| **Test Explorer** | Unit-Test Integration | v0.2.2 |
-| **CTL Language** | Syntax, IntelliSense, Language Server | dev |
-| **Side Panel** | Custom UI Panel | dev |
-| **npm-shared** | Gemeinsame WinCC OA Kommunikation | core lib |
+| Extension          | Rolle                                   | Status   |
+| ------------------ | --------------------------------------- | -------- |
+| **Core**           | Zentrale Projekt-Verwaltung, Status Bar | v0.2.2   |
+| **LogViewer**      | Echtzeit Log-Monitoring                 | v0.2.3   |
+| **Script Actions** | Script-Ausführung mit Argumenten        | v0.3.1   |
+| **Test Explorer**  | Unit-Test Integration                   | v0.2.2   |
+| **CTL Language**   | Syntax, IntelliSense, Language Server   | dev      |
+| **Side Panel**     | Custom UI Panel                         | dev      |
+| **npm-shared**     | Gemeinsame WinCC OA Kommunikation       | core lib |
 
 ## Projektübersicht (Script Actions)
 
 Die **WinCC OA Script Actions** Extension ermöglicht die direkte Ausführung von CTL-Scripts aus VS Code heraus.
 
 ### Kernfunktionen
+
 - Ausführung von CTL-Scripts mit Argumenten
 - Integration mit WinCC OA Core für Projekt-Auswahl
 - Command: `winccoa.executeScriptWithArgs`
@@ -63,26 +65,29 @@ Die **WinCC OA Script Actions** Extension ermöglicht die direkte Ausführung vo
 - Keine `-lflag` oder `-` Präfixe - Argumente werden direkt nach `-proj <name>` angefügt
 
 ### Abhängigkeiten
+
 - **WinCC OA Core Extension**: Für Projekt-Auswahl und Konfiguration
 - **NPM Shared Library**: Gemeinsame WinCC OA Kommunikation
 
 ## Wichtige technische Details
 
 ### Argument Passing (CRITICAL!)
+
 **Problem**: Früher wurden Argumente mit `-lflag` Präfixen übergeben
 **Lösung**: v0.3.1 - Plain string arguments
 
 ```typescript
 // CORRECT (v0.3.1):
-executeScriptWithArgs(fileUri, "testCaseId")
+executeScriptWithArgs(fileUri, 'testCaseId');
 // → /opt/WinCC_OA/bin/WCCOActrl script.ctl -proj DevEnv testCaseId
 
 // WRONG (old):
-executeScriptWithArgs(fileUri, "-lflag testCaseId")
-executeScriptWithArgs(fileUri, "single start testCaseId")
+executeScriptWithArgs(fileUri, '-lflag testCaseId');
+executeScriptWithArgs(fileUri, 'single start testCaseId');
 ```
 
 ### Test Explorer Integration
+
 - Test Explorer nutzt `winccoa.executeScriptWithArgs` für einzelne Test-Ausführung
 - Übergibt nur die `testCaseId` als Plain String
 - Keine zusätzlichen Präfixe oder Flags
@@ -90,6 +95,7 @@ executeScriptWithArgs(fileUri, "single start testCaseId")
 ## Workflow-Regeln
 
 ### 1. Feature-Entwicklung
+
 ```bash
 # 1. Feature starten (automatisch)
 git flow feature start <feature-name-x.y.z>
@@ -121,6 +127,7 @@ git flow feature finish <feature-name-x.y.z>
 ```
 
 ### 2. Commit-Präfixe (Conventional Commits)
+
 - `feat:` - Neues Feature (MINOR Version bump)
 - `fix:` - Bug Fix (PATCH Version bump)
 - `perf:` - Performance Verbesserung
@@ -130,12 +137,15 @@ git flow feature finish <feature-name-x.y.z>
 - `chore:` - Build/Tooling Änderungen
 
 ### 3. Compile-Zyklus
+
 **IMMER** nach Code-Änderungen:
+
 ```bash
 npm run compile
 ```
 
 ### 4. Testing
+
 ```bash
 make test-local  # Erstellt VSIX und öffnet Test-Extension-Host
 ```
@@ -143,6 +153,7 @@ make test-local  # Erstellt VSIX und öffnet Test-Extension-Host
 ## Makefile Automation
 
 ### Version Badge Auto-Update (seit 2026-01-04)
+
 Der `make package` Target aktualisiert automatisch das Version Badge in README.md:
 
 ```makefile
@@ -157,6 +168,7 @@ package: build
 **NICHT manuell Version Badge in README.md ändern** - wird automatisch bei packaging aktualisiert!
 
 ## Versionsstände (Stand: 2026-01-04)
+
 - **Script Actions**: v0.4.0 - Default commands + version badge automation
 - **LogViewer**: v1.0.3 - Backend file watching + version badge automation
 - **CTL Language**: v1.2.0 - Scope-aware rename + keywords + version badge automation
@@ -167,6 +179,7 @@ package: build
 ## Zusammenarbeit mit GitHub Copilot
 
 ### Erwartungen
+
 - **Strukturiert arbeiten**: Klare Workflows, kein Code-Chaos
 - **Kompilieren nach Änderungen**: Immer `npm run compile`
 - **Git Flow einhalten**: Feature Branches, semantische Commits
@@ -174,6 +187,7 @@ package: build
 - **Testen vor Merge**: "Go" vom User abwarten
 
 ### Communication Style
+
 - **Deutsch**: Primäre Sprache für Kommunikation
 - **Englisch**: Code, Commits, Dokumentation
 - **Knapp & präzise**: Keine unnötigen Erklärungen
