@@ -55,7 +55,7 @@ class ExecuteScriptTool implements vscode.LanguageModelTool<ExecuteScriptInput> 
         try {
             const input = options.input;
             console.log(`[ExecuteScriptTool] Executing script: ${input.scriptPath}`);
-            ExtensionOutputChannel.debug('LanguageModelTool', `Execute script: ${input.scriptPath}, withEventConnection: ${input.withEventConnection ?? true}`);
+            ExtensionOutputChannel.debug('LanguageModelTool', `Execute script: ${input.scriptPath}`);
 
             // Validate script path
             if (!input.scriptPath) {
@@ -106,22 +106,14 @@ class ExecuteScriptTool implements vscode.LanguageModelTool<ExecuteScriptInput> 
                 ]);
             }
 
-            // Determine event connection mode (default: true = with event connection)
-            const withEventConnection = input.withEventConnection !== false; // undefined or true → true
-
-            // Execute script via VS Code command
-            // Use executeScriptWithArgs command (supports both args and event connection)
+            // Execute script via VS Code command (without arguments)
             try {
                 await vscode.commands.executeCommand(
-                    'winccoa.executeScriptWithArgs',
-                    uri,
-                    input.args || undefined // undefined if no args
+                    'winccoa.executeScript',
+                    uri
                 );
 
-                const eventConnStr = withEventConnection ? 'with event connection' : 'without event connection (-n)';
-                const resultMessage = input.args 
-                    ? `Script ${input.scriptPath} started with args "${input.args}" (${eventConnStr})`
-                    : `Script ${input.scriptPath} started (${eventConnStr})`;
+                const resultMessage = `Script ${input.scriptPath} started with event connection`;
 
                 ExtensionOutputChannel.info('LanguageModelTool', `✓ ${resultMessage}`);
 
@@ -130,8 +122,6 @@ class ExecuteScriptTool implements vscode.LanguageModelTool<ExecuteScriptInput> 
                         JSON.stringify({
                             success: true,
                             scriptPath: input.scriptPath,
-                            args: input.args || null,
-                            withEventConnection: withEventConnection,
                             message: resultMessage
                         }, null, 2)
                     )
@@ -144,8 +134,7 @@ class ExecuteScriptTool implements vscode.LanguageModelTool<ExecuteScriptInput> 
                         JSON.stringify({
                             success: false,
                             error: `Script execution failed: ${error.message}`,
-                            scriptPath: input.scriptPath,
-                            args: input.args || null
+                            scriptPath: input.scriptPath
                         }, null, 2)
                     )
                 ]);
@@ -175,17 +164,4 @@ interface ExecuteScriptInput {
      * Example: "scripts/test.ctl" or "C:/Projects/MyProject/scripts/test.ctl"
      */
     scriptPath: string;
-
-    /**
-     * Optional arguments to pass to the script (space-separated string).
-     * Example: "arg1 arg2 arg3"
-     */
-    args?: string;
-
-    /**
-     * Whether to start script with event connection (default: true).
-     * - true: Start with event connection (default behavior)
-     * - false: Start without event connection (-n flag)
-     */
-    withEventConnection?: boolean;
 }
