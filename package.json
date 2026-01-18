@@ -86,6 +86,36 @@
         }
       ]
     },
+    "languageModelTools": [
+      {
+        "name": "winccoa_execute_script",
+        "displayName": "Execute WinCC OA Script",
+        "modelDescription": "Execute a WinCC OA CTL script with optional arguments and event connection. Use when the user wants to run a script, start a CTL file, or execute WinCC OA code. By default, scripts run with event connection (full WinCC OA integration). Set withEventConnection to false to run without event connection (-n flag, faster startup but no runtime connection).",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "execute_script",
+        "icon": "$(play)",
+        "userDescription": "Execute a WinCC OA CTL script",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "scriptPath": {
+              "type": "string",
+              "description": "Path to the CTL script file (absolute or workspace-relative). Example: 'scripts/test.ctl' or 'C:/Projects/MyProject/scripts/test.ctl'"
+            },
+            "args": {
+              "type": "string",
+              "description": "Optional arguments to pass to the script (space-separated string). Example: 'arg1 arg2 arg3'"
+            },
+            "withEventConnection": {
+              "type": "boolean",
+              "description": "Whether to start script with event connection (default: true). Set to false for faster startup without runtime connection (-n flag).",
+              "default": true
+            }
+          },
+          "required": ["scriptPath"]
+        }
+      }
+    ],
     "configuration": {
       "title": "WinCC OA Script Actions",
       "properties": {
