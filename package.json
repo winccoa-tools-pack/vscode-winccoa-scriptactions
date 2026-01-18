@@ -2,7 +2,7 @@
   "name": "winccoa-script-actions",
   "displayName": "WinCC OA Script Actions",
   "description": "Execute WinCC OA CTRL scripts directly from VS Code",
-  "version": "1.1.2",
+  "version": "2.0.0",
   "publisher": "RichardJanisch",
   "repository": {
     "type": "git",
@@ -86,6 +86,27 @@
         }
       ]
     },
+    "languageModelTools": [
+      {
+        "name": "scriptactions_execute_script",
+        "displayName": "Execute WinCC OA Script",
+        "modelDescription": "Execute a WinCC OA CTL script with event connection. Use when the user wants to run a script, start a CTL file, or execute WinCC OA code. Scripts always run with full WinCC OA integration (event connection enabled).",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "execute_script",
+        "icon": "$(play)",
+        "userDescription": "Execute a WinCC OA CTL script",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "scriptPath": {
+              "type": "string",
+              "description": "Path to the CTL script file (absolute or workspace-relative). Example: 'scripts/test.ctl' or 'C:/Projects/MyProject/scripts/test.ctl'"
+            }
+          },
+          "required": ["scriptPath"]
+        }
+      }
+    ],
     "configuration": {
       "title": "WinCC OA Script Actions",
       "properties": {

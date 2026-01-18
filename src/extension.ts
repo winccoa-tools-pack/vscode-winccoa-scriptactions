@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { ExtensionOutputChannel } from './extensionOutput';
+import { LanguageModelToolsService } from './languageModelTools';
 
 const execAsync = promisify(exec);
 
@@ -20,6 +21,10 @@ export function activate(context: vscode.ExtensionContext) {
     ExtensionOutputChannel.info('Extension', 'WinCC OA Script Actions Extension activated');
     ExtensionOutputChannel.debug('Extension', `Extension Path: ${context.extensionPath}`);
     ExtensionOutputChannel.debug('Extension', `VS Code Version: ${vscode.version}`);
+
+    // Register Language Model Tools for GitHub Copilot
+    const languageModelTools = new LanguageModelToolsService();
+    languageModelTools.register(context);
 
     // Setup Core extension integration if in automatic mode
     setupCoreExtensionIntegration();

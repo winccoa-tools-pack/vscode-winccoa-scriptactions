@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [2.0.0] - 2026-01-18
+
+### ✨ Added
+- **GitHub Copilot Integration**: Registered Language Model Tool `winccoa_execute_script`
+  - Enables AI assistants (GitHub Copilot) to autonomously execute CTL scripts
+  - Simple interface: scriptPath + optional args + optional withEventConnection flag
+  - Example: "Run script scripts/test.ctl with event connection"
+- **LanguageModelToolsService**: New service for managing AI assistant tools
+  - Automatic registration on extension activation
+  - Proper disposal on deactivation
+  - Detailed logging for debugging
+
+### 🎯 Design Philosophy
+- **Clear Responsibilities**: Script execution belongs to Script Actions Extension
+  - MCP Server Extension: Server lifecycle management only
+  - Script Actions Extension: Script execution + AI tool
+  - CTL Language Extension: Language features + AI tool
+  - LogViewer Extension: Log analysis + AI tool
+- **Consistent Pattern**: Follows same architecture as CTL Language and LogViewer extensions
+
+### 📝 Breaking Changes
+- MAJOR version bump (1.x → 2.0.0) due to new AI integration feature
+- No breaking changes to existing commands or API
+- Backward compatible with existing workflows
+
 ## [1.1.2] - 2026-01-11
 
 ### Changed
