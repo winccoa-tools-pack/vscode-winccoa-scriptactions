@@ -88,7 +88,7 @@
     },
     "languageModelTools": [
       {
-        "name": "winccoa_execute_script",
+        "name": "scriptactions_execute_script",
         "displayName": "Execute WinCC OA Script",
         "modelDescription": "Execute a WinCC OA CTL script with optional arguments and event connection. Use when the user wants to run a script, start a CTL file, or execute WinCC OA code. By default, scripts run with event connection (full WinCC OA integration). Set withEventConnection to false to run without event connection (-n flag, faster startup but no runtime connection).",
         "canBeReferencedInPrompt": true,

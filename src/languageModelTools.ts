@@ -24,7 +24,7 @@ export class LanguageModelToolsService {
         
         // Tool: Execute Script (with optional event connection)
         this.disposables.push(
-            vscode.lm.registerTool('winccoa_execute_script', new ExecuteScriptTool())
+            vscode.lm.registerTool('scriptactions_execute_script', new ExecuteScriptTool())
         );
 
         // Add to context subscriptions
