@@ -61,6 +61,24 @@
         "command": "winccoa.executeScriptWithArgsAndEventConnection",
         "title": "Start Script with Arguments and Event Connection",
         "category": "WinCC OA"
+      },
+      {
+        "command": "winccoa.selectScript",
+        "title": "Select Script",
+        "category": "WinCC OA",
+        "icon": "$(list-selection)"
+      },
+      {
+        "command": "winccoa.executeSelectedScript",
+        "title": "Execute Selected Script",
+        "category": "WinCC OA",
+        "icon": "$(play)"
+      },
+      {
+        "command": "winccoa.pinScript",
+        "title": "Pin Script",
+        "category": "WinCC OA",
+        "icon": "$(pin)"
       }
     ],
     "menus": {
@@ -69,6 +87,11 @@
           "command": "winccoa.executeScript",
           "when": "resourceExtname == '.ctl'",
           "group": "winccoa@1"
+        },
+        {
+          "command": "winccoa.pinScript",
+          "when": "resourceExtname == '.ctl'",
+          "group": "winccoa@2"
         }
       ],
       "editor/context": [
@@ -76,6 +99,11 @@
           "command": "winccoa.executeScript",
           "when": "resourceExtname == '.ctl'",
           "group": "winccoa@1"
+        },
+        {
+          "command": "winccoa.pinScript",
+          "when": "resourceExtname == '.ctl'",
+          "group": "winccoa@2"
         }
       ],
       "editor/title/run": [

@@ -5,6 +5,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import { ExtensionOutputChannel } from './extensionOutput';
 import { LanguageModelToolsService } from './languageModelTools';
+import { ScriptSelector } from './scriptSelector';
 
 const execAsync = promisify(exec);
 
@@ -25,6 +26,50 @@ export function activate(context: vscode.ExtensionContext) {
     // Register Language Model Tools for GitHub Copilot
     const languageModelTools = new LanguageModelToolsService();
     languageModelTools.register(context);
+
+    // Script selector (status bar dropdown + play button)
+    const scriptSelector = new ScriptSelector(context);
+
+    const selectScriptCommand = vscode.commands.registerCommand(
+        'winccoa.selectScript',
+        async () => {
+            await scriptSelector.showSelector();
+        },
+    );
+    context.subscriptions.push(selectScriptCommand);
+
+    const executeSelectedScriptCommand = vscode.commands.registerCommand(
+        'winccoa.executeSelectedScript',
+        async () => {
+            const uri = scriptSelector.getExecutionUri();
+            if (!uri) {
+                vscode.window.showWarningMessage(
+                    'No .ctl file active. Open a .ctl file or pin one via the script selector.',
+                );
+                return;
+            }
+            await executeScript(uri, undefined, true);
+        },
+    );
+    context.subscriptions.push(executeSelectedScriptCommand);
+
+    const pinScriptCommand = vscode.commands.registerCommand(
+        'winccoa.pinScript',
+        async (uri?: vscode.Uri) => {
+            if (!uri && vscode.window.activeTextEditor) {
+                uri = vscode.window.activeTextEditor.document.uri;
+            }
+            if (!uri) {
+                vscode.window.showWarningMessage('No .ctl file selected.');
+                return;
+            }
+            await scriptSelector.pinScript(uri);
+            vscode.window.showInformationMessage(
+                `$(pin) Pinned: ${uri.fsPath.split('/').pop() ?? uri.fsPath}`,
+            );
+        },
+    );
+    context.subscriptions.push(pinScriptCommand);
 
     // Setup Core extension integration if in automatic mode
     setupCoreExtensionIntegration();
