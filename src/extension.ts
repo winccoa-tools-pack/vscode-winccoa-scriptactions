@@ -38,20 +38,40 @@ export function activate(context: vscode.ExtensionContext) {
     );
     context.subscriptions.push(selectScriptCommand);
 
+
     const executeSelectedScriptCommand = vscode.commands.registerCommand(
         'winccoa.executeSelectedScript',
         async () => {
             const uri = scriptSelector.getExecutionUri();
             if (!uri) {
-                vscode.window.showWarningMessage(
-                    'No .ctl file active. Open a .ctl file or pin one via the script selector.',
-                );
+                vscode.window.showWarningMessage('No .ctl script selected or active.');
                 return;
             }
             await executeScript(uri, undefined, true);
         },
     );
     context.subscriptions.push(executeSelectedScriptCommand);
+
+    const executeSelectedScriptPinnedCommand = vscode.commands.registerCommand(
+        'winccoa.executeSelectedScriptPinned',
+        async () => {
+            const uri = scriptSelector.getExecutionUri();
+            if (!uri) {
+                vscode.window.showWarningMessage('No script is pinned. Use the chevron to pin a script.');
+                return;
+            }
+            await executeScript(uri, undefined, true);
+        },
+    );
+    context.subscriptions.push(executeSelectedScriptPinnedCommand);
+
+    const useCurrentScriptCommand = vscode.commands.registerCommand(
+        'winccoa.useCurrentScript',
+        () => {
+            scriptSelector.useCurrentScript();
+        },
+    );
+    context.subscriptions.push(useCurrentScriptCommand);
 
     const pinScriptCommand = vscode.commands.registerCommand(
         'winccoa.pinScript',
