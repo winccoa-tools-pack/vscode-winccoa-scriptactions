@@ -44,13 +44,14 @@
     "commands": [
       {
         "command": "winccoa.executeScript",
-        "title": "Start Script",
+        "title": "Start Script (Current File)",
         "category": "WinCC OA"
       },
       {
         "command": "winccoa.executeScriptWithArgs",
         "title": "Start Script with Arguments",
-        "category": "WinCC OA"
+        "category": "WinCC OA",
+        "icon": "$(play)"
       },
       {
         "command": "winccoa.executeScriptWithEventConnection",
@@ -64,15 +65,29 @@
       },
       {
         "command": "winccoa.selectScript",
-        "title": "Select Script",
+        "title": "Select Script Mode",
         "category": "WinCC OA",
-        "icon": "$(list-selection)"
+        "icon": "$(chevron-down)"
       },
       {
         "command": "winccoa.executeSelectedScript",
-        "title": "Execute Selected Script",
+        "title": "Run Selected Script",
         "category": "WinCC OA",
         "icon": "$(play)"
+      },
+      {
+        "command": "winccoa.executeSelectedScriptPinned",
+        "title": "Run Pinned Script",
+        "category": "WinCC OA",
+        "icon": {
+          "light": "./resources/icons/play-pinned-light.svg",
+          "dark": "./resources/icons/play-pinned-dark.svg"
+        }
+      },
+      {
+        "command": "winccoa.useCurrentScript",
+        "title": "Use Current Script Mode",
+        "category": "WinCC OA"
       },
       {
         "command": "winccoa.pinScript",
@@ -104,16 +119,33 @@
           "command": "winccoa.pinScript",
           "when": "resourceExtname == '.ctl'",
           "group": "winccoa@2"
+        },
+        {
+          "command": "winccoa.useCurrentScript",
+          "when": "winccoaScriptPinned",
+          "group": "winccoa@3"
         }
       ],
       "editor/title/run": [
         {
-          "command": "winccoa.executeScript",
-          "when": "resourceExtname == '.ctl'",
+          "command": "winccoa.executeSelectedScript",
+          "when": "resourceExtname == '.ctl' || winccoaScriptPinned",
           "group": "navigation@1"
+        },
+        {
+          "command": "winccoa.selectScript",
+          "when": "resourceExtname == '.ctl' || winccoaScriptPinned",
+          "group": "navigation@2"
         }
       ]
     },
+    "keybindings": [
+      {
+        "command": "winccoa.executeSelectedScript",
+        "key": "ctrl+f5",
+        "when": "resourceExtname == '.ctl'"
+      }
+    ],
     "languageModelTools": [
       {
         "name": "scriptactions_execute_script",
@@ -131,7 +163,9 @@
               "description": "Path to the CTL script file (absolute or workspace-relative). Example: 'scripts/test.ctl' or 'C:/Projects/MyProject/scripts/test.ctl'"
             }
           },
-          "required": ["scriptPath"]
+          "required": [
+            "scriptPath"
+          ]
         }
       }
     ],
