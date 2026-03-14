@@ -2,220 +2,92 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { ExtensionOutputChannel } from './extensionOutput';
 
-type ScriptSelection =
-    | { type: 'current' }
-    | { type: 'pinned'; fsPath: string; label: string };
+type ScriptMode = 'current' | 'selected';
 
-interface PinnedScript {
+interface SelectedScript {
     fsPath: string;
     label: string;
 }
 
 export class ScriptSelector {
-    private selection: ScriptSelection = { type: 'current' };
-    private pinnedScripts: PinnedScript[] = [];
-
-    private readonly playStatusBar: vscode.StatusBarItem;
-    private readonly selectorStatusBar: vscode.StatusBarItem;
+    private mode: ScriptMode = 'current';
+    private selectedScript: SelectedScript | null = null;
+    private readonly statusBarItem: vscode.StatusBarItem;
 
     constructor(private readonly context: vscode.ExtensionContext) {
-        this.playStatusBar = vscode.window.createStatusBarItem(
-            vscode.StatusBarAlignment.Left,
-            200,
-        );
-        this.selectorStatusBar = vscode.window.createStatusBarItem(
-            vscode.StatusBarAlignment.Left,
-            199,
-        );
-
-        this.playStatusBar.command = 'winccoa.executeSelectedScript';
-        this.selectorStatusBar.command = 'winccoa.selectScript';
+        this.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+        context.subscriptions.push(this.statusBarItem);
 
         this.loadState();
         this.updateStatusBar();
 
-        this.playStatusBar.show();
-        this.selectorStatusBar.show();
-
-        context.subscriptions.push(this.playStatusBar, this.selectorStatusBar);
+        context.subscriptions.push(
+            vscode.window.onDidChangeActiveTextEditor(() => this.updateStatusBar()),
+        );
     }
 
     getExecutionUri(): vscode.Uri | null {
-        if (this.selection.type === 'current') {
+        if (this.mode === 'current') {
             const uri = vscode.window.activeTextEditor?.document.uri;
-            if (uri?.fsPath.toLowerCase().endsWith('.ctl')) {
-                return uri;
-            }
-            return null;
+            return uri?.fsPath.toLowerCase().endsWith('.ctl') ? uri : null;
         }
-        return vscode.Uri.file(this.selection.fsPath);
+        return this.selectedScript ? vscode.Uri.file(this.selectedScript.fsPath) : null;
+    }
+
+    useCurrentScript(): void {
+        this.mode = 'current';
+        this.saveState();
+        this.updateStatusBar();
+        ExtensionOutputChannel.info('ScriptSelector', 'Mode set to current (active editor)');
     }
 
     async pinScript(uri: vscode.Uri): Promise<void> {
         const fsPath = uri.fsPath;
         const label = path.basename(fsPath);
-
-        if (!this.pinnedScripts.find((s) => s.fsPath === fsPath)) {
-            this.pinnedScripts.push({ fsPath, label });
-            ExtensionOutputChannel.info('ScriptSelector', `Pinned script: ${label}`);
-        }
-
-        this.selection = { type: 'pinned', fsPath, label };
+        this.selectedScript = { fsPath, label };
+        this.mode = 'selected';
         this.saveState();
         this.updateStatusBar();
-    }
-
-    unpinScript(fsPath: string): void {
-        const label = path.basename(fsPath);
-        this.pinnedScripts = this.pinnedScripts.filter((s) => s.fsPath !== fsPath);
-
-        if (this.selection.type === 'pinned' && this.selection.fsPath === fsPath) {
-            this.selection = { type: 'current' };
-        }
-
-        this.saveState();
-        this.updateStatusBar();
-        ExtensionOutputChannel.info('ScriptSelector', `Unpinned script: ${label}`);
+        ExtensionOutputChannel.info('ScriptSelector', `Selected script: ${label}`);
     }
 
     async showSelector(): Promise<void> {
-        const trashButton: vscode.QuickInputButton = {
-            iconPath: new vscode.ThemeIcon('trash'),
-            tooltip: 'Remove from pinned list',
-        };
+        const items = [
+            {
+                label: '$(play) Use current active script',
+                description: 'Always executes the active editor file',
+                action: 'current' as const,
+            },
+            {
+                label: '$(pin) Pin a script',
+                description: 'Always executes a fixed script regardless of active tab',
+                action: 'pin' as const,
+            },
+        ];
 
-        const qp = vscode.window.createQuickPick();
-        qp.title = 'WinCC OA: Script Selector';
-        qp.placeholder = 'Select a script to run...';
-        qp.matchOnDescription = true;
-
-        const buildItems = (): vscode.QuickPickItem[] => {
-            const items: vscode.QuickPickItem[] = [
-                {
-                    label: '$(file-code)  Current Script',
-                    description: 'Always runs the active .ctl file in the editor',
-                    alwaysShow: true,
-                },
-            ];
-
-            if (this.pinnedScripts.length > 0) {
-                items.push({
-                    label: 'Pinned Scripts',
-                    kind: vscode.QuickPickItemKind.Separator,
-                });
-                for (const script of this.pinnedScripts) {
-                    items.push({
-                        label: `$(pin)  ${script.label}`,
-                        description: vscode.workspace.asRelativePath(script.fsPath),
-                        buttons: [trashButton],
-                    });
-                }
-            }
-
-            items.push({ label: '', kind: vscode.QuickPickItemKind.Separator });
-            items.push({
-                label: '$(add)  Pin active script',
-                description: 'Add the currently open .ctl file to the list',
-                alwaysShow: true,
-            });
-            items.push({
-                label: '$(search)  Browse workspace scripts...',
-                description: 'Find and pin any .ctl file in the workspace',
-                alwaysShow: true,
-            });
-
-            return items;
-        };
-
-        const refreshItems = () => {
-            const items = buildItems();
-            qp.items = items;
-
-            // Highlight the currently active selection
-            if (this.selection.type === 'current') {
-                qp.activeItems = items.slice(0, 1);
-            } else {
-                const match = items.find(
-                    (i) =>
-                        this.selection.type === 'pinned' &&
-                        i.label === `$(pin)  ${this.selection.label}`,
-                );
-                if (match) {
-                    qp.activeItems = [match];
-                }
-            }
-        };
-
-        refreshItems();
-
-        qp.onDidTriggerItemButton(async (e) => {
-            // Trash button: extract label from "$(pin)  name.ctl"
-            const rawLabel = e.item.label.replace(/^\$\(pin\)\s+/, '');
-            const script = this.pinnedScripts.find((s) => s.label === rawLabel);
-            if (script) {
-                this.unpinScript(script.fsPath);
-                refreshItems();
-            }
+        const picked = await vscode.window.showQuickPick(items, {
+            title: 'WinCC OA: Script Mode',
+            placeHolder: 'Choose execution mode',
         });
 
-        qp.onDidAccept(async () => {
-            const selected = qp.selectedItems[0];
-            if (!selected) {
-                return;
-            }
-
-            qp.hide();
-
-            if (selected.label === '$(file-code)  Current Script') {
-                this.selection = { type: 'current' };
-                this.saveState();
-                this.updateStatusBar();
-                ExtensionOutputChannel.info('ScriptSelector', 'Switched to: Current Script mode');
-            } else if (selected.label.startsWith('$(pin)  ')) {
-                const rawLabel = selected.label.replace(/^\$\(pin\)\s+/, '');
-                const script = this.pinnedScripts.find((s) => s.label === rawLabel);
-                if (script) {
-                    this.selection = {
-                        type: 'pinned',
-                        fsPath: script.fsPath,
-                        label: script.label,
-                    };
-                    this.saveState();
-                    this.updateStatusBar();
-                    ExtensionOutputChannel.info(
-                        'ScriptSelector',
-                        `Selected pinned script: ${script.label}`,
-                    );
-                }
-            } else if (selected.label === '$(add)  Pin active script') {
-                qp.dispose();
-                await this.pinActiveScript();
-            } else if (selected.label === '$(search)  Browse workspace scripts...') {
-                qp.dispose();
-                await this.browseAndPin();
-            }
-        });
-
-        qp.onDidHide(() => qp.dispose());
-        qp.show();
-    }
-
-    private async pinActiveScript(): Promise<void> {
-        const activeUri = vscode.window.activeTextEditor?.document.uri;
-        if (!activeUri || !activeUri.fsPath.toLowerCase().endsWith('.ctl')) {
-            vscode.window.showWarningMessage(
-                'No .ctl file is currently active in the editor. Open a .ctl file first.',
-            );
-            return;
+        if (!picked) return;
+        if (picked.action === 'current') {
+            this.useCurrentScript();
+        } else {
+            await this.changeSelectedScript();
         }
-        await this.pinScript(activeUri);
-        vscode.window.showInformationMessage(
-            `$(pin) Pinned: ${path.basename(activeUri.fsPath)}`,
-        );
     }
 
-    private async browseAndPin(): Promise<void> {
+    private async changeSelectedScript(): Promise<void> {
         const files = await vscode.workspace.findFiles('**/*.ctl', '**/node_modules/**');
+
+        // Also include current selectedScript if outside workspace
+        if (this.selectedScript) {
+            const workspaceUris = new Set(files.map((f) => f.fsPath));
+            if (!workspaceUris.has(this.selectedScript.fsPath)) {
+                files.push(vscode.Uri.file(this.selectedScript.fsPath));
+            }
+        }
 
         if (files.length === 0) {
             vscode.window.showInformationMessage('No .ctl files found in the workspace.');
@@ -228,71 +100,76 @@ export class ScriptSelector {
             uri: f,
         }));
 
-        const selected = await vscode.window.showQuickPick(picks, {
-            placeHolder: 'Select a .ctl script to pin',
-            title: 'WinCC OA: Browse Scripts',
+        const picked = await vscode.window.showQuickPick(picks, {
+            placeHolder: 'Select a .ctl script',
+            title: 'WinCC OA: Pin Script',
             matchOnDescription: true,
         });
 
-        if (selected) {
-            await this.pinScript(selected.uri);
-            vscode.window.showInformationMessage(`$(pin) Pinned: ${selected.label}`);
+        if (picked) {
+            await this.pinScript(picked.uri);
         }
     }
 
     private updateStatusBar(): void {
-        if (this.selection.type === 'current') {
-            this.selectorStatusBar.text = '$(file-code) Current Script $(chevron-down)';
-            this.selectorStatusBar.tooltip = new vscode.MarkdownString(
-                '**WinCC OA Script Selector**\n\nCurrently: follows active editor\n\nClick to pin a specific script',
-            );
-            this.selectorStatusBar.color = undefined;
-            this.selectorStatusBar.backgroundColor = undefined;
+        vscode.commands.executeCommand('setContext', 'winccoaScriptPinned', this.mode === 'selected');
+
+        if (this.mode === 'selected' && this.selectedScript) {
+            this.statusBarItem.text = this.selectedScript.label;
+            this.statusBarItem.tooltip = `WinCC OA: Pinned script — ${this.selectedScript.fsPath}`;
+            this.statusBarItem.show();
         } else {
-            this.selectorStatusBar.text = `$(pin) ${this.selection.label} $(chevron-down)`;
-            this.selectorStatusBar.tooltip = new vscode.MarkdownString(
-                `**WinCC OA Script Selector**\n\nPinned: \`${this.selection.fsPath}\`\n\nClick to change selection`,
-            );
-            this.selectorStatusBar.color = new vscode.ThemeColor(
-                'statusBarItem.warningForeground',
-            );
-            this.selectorStatusBar.backgroundColor = new vscode.ThemeColor(
-                'statusBarItem.warningBackground',
-            );
+            const activeUri = vscode.window.activeTextEditor?.document.uri;
+            if (activeUri?.fsPath.toLowerCase().endsWith('.ctl')) {
+                const label = path.basename(activeUri.fsPath);
+                this.statusBarItem.text = label;
+                this.statusBarItem.tooltip = `WinCC OA: Will execute active script — ${activeUri.fsPath}`;
+                this.statusBarItem.show();
+            } else {
+                this.statusBarItem.hide();
+            }
         }
 
-        this.playStatusBar.text = '$(play)';
-        this.playStatusBar.color =
-            this.selection.type === 'current'
-                ? undefined
-                : new vscode.ThemeColor('statusBarItem.warningForeground');
-        this.playStatusBar.backgroundColor =
-            this.selection.type === 'current'
-                ? undefined
-                : new vscode.ThemeColor('statusBarItem.warningBackground');
-        this.playStatusBar.tooltip =
-            this.selection.type === 'current'
-                ? 'Run active .ctl script (WinCC OA)'
-                : `Run pinned script: ${this.selection.label}`;
+        ExtensionOutputChannel.debug('ScriptSelector', `Status bar updated: mode=${this.mode}`);
     }
 
     private saveState(): void {
-        this.context.workspaceState.update('scriptSelector.selection', this.selection);
-        this.context.workspaceState.update('scriptSelector.pinnedScripts', this.pinnedScripts);
+        this.context.workspaceState.update('scriptSelector.mode', this.mode);
+        this.context.workspaceState.update('scriptSelector.selectedScript', this.selectedScript);
     }
 
     private loadState(): void {
-        this.selection = this.context.workspaceState.get<ScriptSelection>(
-            'scriptSelector.selection',
-            { type: 'current' },
-        );
-        this.pinnedScripts = this.context.workspaceState.get<PinnedScript[]>(
-            'scriptSelector.pinnedScripts',
-            [],
-        );
+        const newMode = this.context.workspaceState.get<ScriptMode>('scriptSelector.mode');
+
+        if (newMode !== undefined) {
+            this.mode = newMode;
+            this.selectedScript = this.context.workspaceState.get<SelectedScript | null>(
+                'scriptSelector.selectedScript',
+                null,
+            );
+        } else {
+            // Migrate from old state format
+            const oldSelection = this.context.workspaceState.get<{
+                type: string;
+                fsPath?: string;
+                label?: string;
+            }>('scriptSelector.selection');
+
+            if (oldSelection?.type === 'pinned' && oldSelection.fsPath && oldSelection.label) {
+                this.mode = 'selected';
+                this.selectedScript = { fsPath: oldSelection.fsPath, label: oldSelection.label };
+                ExtensionOutputChannel.info('ScriptSelector', 'Migrated pinned script from old state');
+            }
+
+            // Clear old keys
+            this.context.workspaceState.update('scriptSelector.selection', undefined);
+            this.context.workspaceState.update('scriptSelector.pinnedScripts', undefined);
+            this.saveState();
+        }
+
         ExtensionOutputChannel.debug(
             'ScriptSelector',
-            `Loaded state: selection=${JSON.stringify(this.selection)}, pinned=${this.pinnedScripts.length}`,
+            `Loaded state: mode=${this.mode}, selectedScript=${JSON.stringify(this.selectedScript)}`,
         );
     }
 }
