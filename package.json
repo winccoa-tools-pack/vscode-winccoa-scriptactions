@@ -101,7 +101,7 @@
       {
         "id": "winccoa.scriptModeMenu",
         "label": "Script Mode",
-        "icon": "$(symbol-event)"
+        "icon": "$(chevron-down)"
       }
     ],
     "menus": {
@@ -134,23 +134,21 @@
           "group": "winccoa@3"
         }
       ],
-      "editor/title": [
-        {
-          "submenu": "winccoa.scriptModeMenu",
-          "when": "resourceExtname == '.ctl' || winccoaScriptPinned",
-          "group": "navigation"
-        }
-      ],
-      "winccoa.scriptModeMenu": [
-        { "command": "winccoa.useCurrentScript", "group": "1_mode@1" },
-        { "command": "winccoa.selectScript", "group": "1_mode@2" }
-      ],
       "editor/title/run": [
         {
           "command": "winccoa.executeSelectedScript",
           "when": "resourceExtname == '.ctl' || winccoaScriptPinned",
           "group": "navigation@1"
+        },
+        {
+          "submenu": "winccoa.scriptModeMenu",
+          "when": "resourceExtname == '.ctl' || winccoaScriptPinned",
+          "group": "navigation@2"
         }
+      ],
+      "winccoa.scriptModeMenu": [
+        { "command": "winccoa.useCurrentScript", "group": "1_mode@1" },
+        { "command": "winccoa.selectScript", "group": "1_mode@2" }
       ]
     },
     "keybindings": [
