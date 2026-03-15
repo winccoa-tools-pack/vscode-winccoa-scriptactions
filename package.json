@@ -65,13 +65,13 @@
       },
       {
         "command": "winccoa.selectScript",
-        "title": "Select Script Mode",
+        "title": "Pin a Script...",
         "category": "WinCC OA",
-        "icon": "$(chevron-down)"
+        "icon": "$(pin)"
       },
       {
         "command": "winccoa.executeSelectedScript",
-        "title": "Run Selected Script",
+        "title": "Run Script",
         "category": "WinCC OA",
         "icon": "$(play)"
       },
@@ -87,7 +87,8 @@
       {
         "command": "winccoa.useCurrentScript",
         "title": "Use Current Script Mode",
-        "category": "WinCC OA"
+        "category": "WinCC OA",
+        "icon": "$(debug-reverse-continue)"
       },
       {
         "command": "winccoa.pinScript",
@@ -133,9 +134,14 @@
           "group": "navigation@1"
         },
         {
-          "command": "winccoa.selectScript",
+          "command": "winccoa.useCurrentScript",
           "when": "resourceExtname == '.ctl' || winccoaScriptPinned",
           "group": "navigation@2"
+        },
+        {
+          "command": "winccoa.selectScript",
+          "when": "resourceExtname == '.ctl' || winccoaScriptPinned",
+          "group": "navigation@3"
         }
       ]
     },

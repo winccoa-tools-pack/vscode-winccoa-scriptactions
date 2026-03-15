@@ -52,30 +52,7 @@ export class ScriptSelector {
     }
 
     async showSelector(): Promise<void> {
-        const items = [
-            {
-                label: '$(play) Use current active script',
-                description: 'Always executes the active editor file',
-                action: 'current' as const,
-            },
-            {
-                label: '$(pin) Pin a script',
-                description: 'Always executes a fixed script regardless of active tab',
-                action: 'pin' as const,
-            },
-        ];
-
-        const picked = await vscode.window.showQuickPick(items, {
-            title: 'WinCC OA: Script Mode',
-            placeHolder: 'Choose execution mode',
-        });
-
-        if (!picked) return;
-        if (picked.action === 'current') {
-            this.useCurrentScript();
-        } else {
-            await this.changeSelectedScript();
-        }
+        await this.changeSelectedScript();
     }
 
     private async changeSelectedScript(): Promise<void> {
