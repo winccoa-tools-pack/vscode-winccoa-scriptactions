@@ -13,10 +13,20 @@ export class ScriptSelector {
     private mode: ScriptMode = 'current';
     private selectedScript: SelectedScript | null = null;
     private readonly statusBarItem: vscode.StatusBarItem;
+    private readonly codeLensEmitter = new vscode.EventEmitter<void>();
 
     constructor(private readonly context: vscode.ExtensionContext) {
         this.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
         context.subscriptions.push(this.statusBarItem);
+
+        const codeLensProvider: vscode.CodeLensProvider = {
+            onDidChangeCodeLenses: this.codeLensEmitter.event,
+            provideCodeLenses: (document) => this.provideCodeLenses(document),
+        };
+        context.subscriptions.push(
+            vscode.languages.registerCodeLensProvider({ pattern: '**/*.ctl' }, codeLensProvider),
+            this.codeLensEmitter,
+        );
 
         this.loadState();
         this.updateStatusBar();
@@ -88,6 +98,38 @@ export class ScriptSelector {
         }
     }
 
+    private provideCodeLenses(document: vscode.TextDocument): vscode.CodeLens[] {
+        const range = new vscode.Range(0, 0, 0, 0);
+        const lenses: vscode.CodeLens[] = [];
+        const docName = path.basename(document.uri.fsPath);
+
+        // Always show a lens to run the current file
+        lenses.push(
+            new vscode.CodeLens(range, {
+                title: `$(play) Run ${docName}`,
+                command: 'winccoa.executeScript',
+                arguments: [document.uri],
+                tooltip: `Run this file — ${document.uri.fsPath}`,
+            }),
+        );
+
+        // Show pinned script lens if one is pinned and it's a different file
+        if (this.mode === 'selected' && this.selectedScript) {
+            const pinnedName = this.selectedScript.label;
+            if (document.uri.fsPath !== this.selectedScript.fsPath) {
+                lenses.push(
+                    new vscode.CodeLens(range, {
+                        title: `$(pinned) Run pinned: ${pinnedName}`,
+                        command: 'winccoa.executeSelectedScript',
+                        tooltip: `Run pinned script — ${this.selectedScript.fsPath}`,
+                    }),
+                );
+            }
+        }
+
+        return lenses;
+    }
+
     private updateStatusBar(): void {
         vscode.commands.executeCommand('setContext', 'winccoaScriptPinned', this.mode === 'selected');
 
@@ -102,6 +144,7 @@ export class ScriptSelector {
             this.statusBarItem.hide();
         }
 
+        this.codeLensEmitter.fire();
         ExtensionOutputChannel.debug('ScriptSelector', `Status bar updated: mode=${this.mode}`);
     }
 
