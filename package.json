@@ -86,7 +86,7 @@
       },
       {
         "command": "winccoa.useCurrentScript",
-        "title": "Use Current Script Mode",
+        "title": "Active Script",
         "category": "WinCC OA",
         "icon": "$(debug-reverse-continue)"
       },
@@ -95,6 +95,13 @@
         "title": "Pin Script",
         "category": "WinCC OA",
         "icon": "$(pin)"
+      }
+    ],
+    "submenus": [
+      {
+        "id": "winccoa.scriptModeMenu",
+        "label": "Script Mode",
+        "icon": "$(symbol-event)"
       }
     ],
     "menus": {
@@ -127,21 +134,22 @@
           "group": "winccoa@3"
         }
       ],
+      "editor/title": [
+        {
+          "submenu": "winccoa.scriptModeMenu",
+          "when": "resourceExtname == '.ctl' || winccoaScriptPinned",
+          "group": "navigation"
+        }
+      ],
+      "winccoa.scriptModeMenu": [
+        { "command": "winccoa.useCurrentScript", "group": "1_mode@1" },
+        { "command": "winccoa.selectScript", "group": "1_mode@2" }
+      ],
       "editor/title/run": [
         {
           "command": "winccoa.executeSelectedScript",
           "when": "resourceExtname == '.ctl' || winccoaScriptPinned",
           "group": "navigation@1"
-        },
-        {
-          "command": "winccoa.useCurrentScript",
-          "when": "winccoaScriptPinned",
-          "group": "1_run@1"
-        },
-        {
-          "command": "winccoa.selectScript",
-          "when": "resourceExtname == '.ctl' || winccoaScriptPinned",
-          "group": "1_run@2"
         }
       ]
     },
