@@ -135,13 +135,13 @@
         },
         {
           "command": "winccoa.useCurrentScript",
-          "when": "resourceExtname == '.ctl' || winccoaScriptPinned",
-          "group": "navigation@2"
+          "when": "winccoaScriptPinned",
+          "group": "1_run@1"
         },
         {
           "command": "winccoa.selectScript",
           "when": "resourceExtname == '.ctl' || winccoaScriptPinned",
-          "group": "navigation@3"
+          "group": "1_run@2"
         }
       ]
     },
