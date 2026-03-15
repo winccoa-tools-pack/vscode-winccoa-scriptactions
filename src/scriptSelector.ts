@@ -91,20 +91,15 @@ export class ScriptSelector {
     private updateStatusBar(): void {
         vscode.commands.executeCommand('setContext', 'winccoaScriptPinned', this.mode === 'selected');
 
-        if (this.mode === 'selected' && this.selectedScript) {
-            this.statusBarItem.text = this.selectedScript.label;
-            this.statusBarItem.tooltip = `WinCC OA: Pinned script — ${this.selectedScript.fsPath}`;
+        const uri = this.getExecutionUri();
+        if (uri) {
+            const label = path.basename(uri.fsPath);
+            const modeLabel = this.mode === 'selected' ? 'Pinned' : 'Active';
+            this.statusBarItem.text = label;
+            this.statusBarItem.tooltip = `WinCC OA: ${modeLabel} script — ${uri.fsPath}`;
             this.statusBarItem.show();
         } else {
-            const activeUri = vscode.window.activeTextEditor?.document.uri;
-            if (activeUri?.fsPath.toLowerCase().endsWith('.ctl')) {
-                const label = path.basename(activeUri.fsPath);
-                this.statusBarItem.text = label;
-                this.statusBarItem.tooltip = `WinCC OA: Will execute active script — ${activeUri.fsPath}`;
-                this.statusBarItem.show();
-            } else {
-                this.statusBarItem.hide();
-            }
+            this.statusBarItem.hide();
         }
 
         ExtensionOutputChannel.debug('ScriptSelector', `Status bar updated: mode=${this.mode}`);
