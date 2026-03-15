@@ -13,5 +13,11 @@ src/**
 tsconfig.json
 tsconfig.tsbuildinfo
 node_modules/**
+CLAUDE.md
+.claude/**
+docker/**
+docs/**
+scripts/**
+dist/test/**
 !images/**/*.gif
 !resources/**/*.gif
