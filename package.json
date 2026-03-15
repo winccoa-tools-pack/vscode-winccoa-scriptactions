@@ -137,12 +137,10 @@
       "editor/title/run": [
         {
           "command": "winccoa.executeSelectedScript",
-          "when": "resourceExtname == '.ctl' || winccoaScriptPinned",
           "group": "navigation@1"
         },
         {
           "submenu": "winccoa.scriptModeMenu",
-          "when": "resourceExtname == '.ctl' || winccoaScriptPinned",
           "group": "navigation@2"
         }
       ],
