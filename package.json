@@ -44,13 +44,14 @@
     "commands": [
       {
         "command": "winccoa.executeScript",
-        "title": "Start Script",
+        "title": "Start Script (Current File)",
         "category": "WinCC OA"
       },
       {
         "command": "winccoa.executeScriptWithArgs",
         "title": "Start Script with Arguments",
-        "category": "WinCC OA"
+        "category": "WinCC OA",
+        "icon": "$(play)"
       },
       {
         "command": "winccoa.executeScriptWithEventConnection",
@@ -61,6 +62,46 @@
         "command": "winccoa.executeScriptWithArgsAndEventConnection",
         "title": "Start Script with Arguments and Event Connection",
         "category": "WinCC OA"
+      },
+      {
+        "command": "winccoa.selectScript",
+        "title": "Pin a Script...",
+        "category": "WinCC OA",
+        "icon": "$(pin)"
+      },
+      {
+        "command": "winccoa.executeSelectedScript",
+        "title": "Run Script",
+        "category": "WinCC OA",
+        "icon": "$(play)"
+      },
+      {
+        "command": "winccoa.executeSelectedScriptPinned",
+        "title": "Run Pinned Script",
+        "category": "WinCC OA",
+        "icon": {
+          "light": "./resources/icons/play-pinned-light.svg",
+          "dark": "./resources/icons/play-pinned-dark.svg"
+        }
+      },
+      {
+        "command": "winccoa.useCurrentScript",
+        "title": "Active Script",
+        "category": "WinCC OA",
+        "icon": "$(debug-reverse-continue)"
+      },
+      {
+        "command": "winccoa.pinScript",
+        "title": "Pin Script",
+        "category": "WinCC OA",
+        "icon": "$(pin)"
+      }
+    ],
+    "submenus": [
+      {
+        "id": "winccoa.scriptModeMenu",
+        "label": "Script Mode",
+        "icon": "$(chevron-down)"
       }
     ],
     "menus": {
@@ -69,6 +110,11 @@
           "command": "winccoa.executeScript",
           "when": "resourceExtname == '.ctl'",
           "group": "winccoa@1"
+        },
+        {
+          "command": "winccoa.pinScript",
+          "when": "resourceExtname == '.ctl'",
+          "group": "winccoa@2"
         }
       ],
       "editor/context": [
@@ -76,16 +122,40 @@
           "command": "winccoa.executeScript",
           "when": "resourceExtname == '.ctl'",
           "group": "winccoa@1"
+        },
+        {
+          "command": "winccoa.pinScript",
+          "when": "resourceExtname == '.ctl'",
+          "group": "winccoa@2"
+        },
+        {
+          "command": "winccoa.useCurrentScript",
+          "when": "winccoaScriptPinned",
+          "group": "winccoa@3"
         }
       ],
       "editor/title/run": [
         {
-          "command": "winccoa.executeScript",
-          "when": "resourceExtname == '.ctl'",
+          "command": "winccoa.executeSelectedScript",
           "group": "navigation@1"
+        },
+        {
+          "submenu": "winccoa.scriptModeMenu",
+          "group": "navigation@2"
         }
+      ],
+      "winccoa.scriptModeMenu": [
+        { "command": "winccoa.useCurrentScript", "group": "1_mode@1" },
+        { "command": "winccoa.selectScript", "group": "1_mode@2" }
       ]
     },
+    "keybindings": [
+      {
+        "command": "winccoa.executeSelectedScript",
+        "key": "ctrl+f5",
+        "when": "resourceExtname == '.ctl'"
+      }
+    ],
     "languageModelTools": [
       {
         "name": "scriptactions_execute_script",
@@ -103,7 +173,9 @@
               "description": "Path to the CTL script file (absolute or workspace-relative). Example: 'scripts/test.ctl' or 'C:/Projects/MyProject/scripts/test.ctl'"
             }
           },
-          "required": ["scriptPath"]
+          "required": [
+            "scriptPath"
+          ]
         }
       }
     ],
