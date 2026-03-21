@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-2.1.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![VS Code](https://img.shields.io/badge/VS%20Code-1.107.1-007ACC.svg)
 
@@ -27,7 +27,20 @@
 
 ## ✨ Features
 
-### 🚀 Quick Script Execution
+### � Script Execution Pinning (NEW in 2.1.0)
+
+- **Pin & Run**: Pin a specific script and execute it from any editor tab
+- **Status Bar Widget**: Play button and script name dropdown for quick access
+- **Execution Modes**:
+  - **Active Script**: Run the file in the current editor
+  - **Pinned Script**: Always run the pinned script, regardless of active editor
+- **CodeLens Integration**: "Run" button at the top of every `.ctl` file
+- **Keyboard Shortcut**: Press `Ctrl+F5` to run selected/pinned script
+- **Persistent State**: Your pinned script and mode are saved across sessions
+
+**Perfect for Test-Driven Development**: Edit your code, press `Ctrl+F5`, and instantly run your test script without switching tabs!
+
+### �🚀 Quick Script Execution
 
 - **Right-click execution**: Context menu on `.ctl` files in Explorer or editor
 - **Command Palette**: Execute scripts via `Ctrl+Shift+P`

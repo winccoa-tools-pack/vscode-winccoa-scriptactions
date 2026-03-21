@@ -16,7 +16,10 @@ export class ScriptSelector {
     private readonly codeLensEmitter = new vscode.EventEmitter<void>();
 
     constructor(private readonly context: vscode.ExtensionContext) {
-        this.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+        this.statusBarItem = vscode.window.createStatusBarItem(
+            vscode.StatusBarAlignment.Right,
+            100,
+        );
         context.subscriptions.push(this.statusBarItem);
 
         const codeLensProvider: vscode.CodeLensProvider = {
@@ -131,7 +134,11 @@ export class ScriptSelector {
     }
 
     private updateStatusBar(): void {
-        vscode.commands.executeCommand('setContext', 'winccoaScriptPinned', this.mode === 'selected');
+        vscode.commands.executeCommand(
+            'setContext',
+            'winccoaScriptPinned',
+            this.mode === 'selected',
+        );
 
         const uri = this.getExecutionUri();
         if (uri) {
@@ -173,7 +180,10 @@ export class ScriptSelector {
             if (oldSelection?.type === 'pinned' && oldSelection.fsPath && oldSelection.label) {
                 this.mode = 'selected';
                 this.selectedScript = { fsPath: oldSelection.fsPath, label: oldSelection.label };
-                ExtensionOutputChannel.info('ScriptSelector', 'Migrated pinned script from old state');
+                ExtensionOutputChannel.info(
+                    'ScriptSelector',
+                    'Migrated pinned script from old state',
+                );
             }
 
             // Clear old keys
@@ -184,7 +194,9 @@ export class ScriptSelector {
 
         ExtensionOutputChannel.debug(
             'ScriptSelector',
-            `Loaded state: mode=${this.mode}, selectedScript=${JSON.stringify(this.selectedScript)}`,
+            `Loaded state: mode=${this.mode}, selectedScript=${JSON.stringify(
+                this.selectedScript,
+            )}`,
         );
     }
 }

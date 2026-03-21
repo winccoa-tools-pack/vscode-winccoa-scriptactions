@@ -38,7 +38,6 @@ export function activate(context: vscode.ExtensionContext) {
     );
     context.subscriptions.push(selectScriptCommand);
 
-
     const executeSelectedScriptCommand = vscode.commands.registerCommand(
         'winccoa.executeSelectedScript',
         async () => {
@@ -57,7 +56,9 @@ export function activate(context: vscode.ExtensionContext) {
         async () => {
             const uri = scriptSelector.getExecutionUri();
             if (!uri) {
-                vscode.window.showWarningMessage('No script is pinned. Use the chevron to pin a script.');
+                vscode.window.showWarningMessage(
+                    'No script is pinned. Use the chevron to pin a script.',
+                );
                 return;
             }
             await executeScript(uri, undefined, true);
