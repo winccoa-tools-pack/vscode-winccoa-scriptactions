@@ -318,7 +318,10 @@ async function executeScript(
             ExtensionOutputChannel.debug('ScriptExecution', 'Triggered LogViewer auto-clear');
         } catch {
             // Ignore if LogViewer extension is not installed or command fails
-            ExtensionOutputChannel.trace('ScriptExecution', 'LogViewer auto-clear not available (extension may not be installed)');
+            ExtensionOutputChannel.trace(
+                'ScriptExecution',
+                'LogViewer auto-clear not available (extension may not be installed)',
+            );
         }
 
         // Get configuration
