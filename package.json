@@ -2,7 +2,7 @@
   "name": "winccoa-script-actions",
   "displayName": "WinCC OA Script Actions",
   "description": "Execute WinCC OA CTRL scripts directly from VS Code",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "publisher": "RichardJanisch",
   "repository": {
     "type": "git",
@@ -145,8 +145,14 @@
         }
       ],
       "winccoa.scriptModeMenu": [
-        { "command": "winccoa.useCurrentScript", "group": "1_mode@1" },
-        { "command": "winccoa.selectScript", "group": "1_mode@2" }
+        {
+          "command": "winccoa.useCurrentScript",
+          "group": "1_mode@1"
+        },
+        {
+          "command": "winccoa.selectScript",
+          "group": "1_mode@2"
+        }
       ]
     },
     "keybindings": [
@@ -255,15 +261,18 @@
     "@types/mocha": "^10.0.6",
     "@types/node": "^24.10.2",
     "@types/vscode": "^1.80.0",
-    "@typescript-eslint/eslint-plugin": "^6.10.0",
-    "@typescript-eslint/parser": "^6.10.0",
+    "@typescript-eslint/eslint-plugin": "^8.57.1",
+    "@typescript-eslint/parser": "^8.57.1",
     "@vscode/test-electron": "^2.3.9",
     "@vscode/vsce": "^3.7.1",
     "eslint": "^8.50.0",
     "glob": "^13.0.0",
-    "markdownlint-cli": "^0.47.0",
-    "mocha": "^11.7.5",
+    "markdownlint-cli": "^0.48.0",
+    "mocha": "^11.3.0",
     "prettier": "^2.8.8",
     "typescript": "^5.2.0"
+  },
+  "overrides": {
+    "serialize-javascript": "^7.0.4"
   }
 }

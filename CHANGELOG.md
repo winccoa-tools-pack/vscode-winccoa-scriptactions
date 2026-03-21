@@ -6,6 +6,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [2.1.0] - 2026-03-21
+
+### ✨ Added
+- **Script Execution Pinning**: Pin a specific `.ctl` script and run it from any editor tab (#54)
+  - **Script Selector**: Status bar widget with play button and script name dropdown
+  - **Execution Modes**: Switch between Active Script (current editor) and Pinned Script (always runs pinned script)
+  - **CodeLens Integration**: "Run" lens at the top of every `.ctl` file; second lens appears when different script is pinned
+  - **Editor Title Bar Buttons**: Play and mode-switch buttons visible on all editor tabs
+  - **Keyboard Shortcut**: `Ctrl+F5` to run the selected/pinned script
+  - **Custom SVG Icons**: Visual distinction for pinned script execution
+  - **State Persistence**: Pinned script and mode preserved across VS Code sessions via workspaceState
+
+### 🎯 Use Cases
+- Run test scripts while editing implementation files
+- Execute build/deployment scripts without switching tabs
+- Quick iteration: edit code, press `Ctrl+F5`, see results
+- Ideal for Test-Driven Development workflows
+
+### 🙏 Credits
+- Feature contributed by [@JaMa-95](https://github.com/JaMa-95)
+## [2.0.1] - 2026-01-25
+
+### Fixed
+- **Binary Packaging**: Corrected binary used in VSIX package
+  - Previous test build used incorrect binary
+  - This release contains the correct production binary
 
 ## [2.0.0] - 2026-01-18
 
