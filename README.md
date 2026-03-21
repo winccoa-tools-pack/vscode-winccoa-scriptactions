@@ -31,7 +31,7 @@
 
 - **Pin & Run**: Pin a specific script and execute it from any editor tab
 - **Status Bar Widget**: Play button and script name dropdown for quick access
-- **Execution Modes**: 
+- **Execution Modes**:
   - **Active Script**: Run the file in the current editor
   - **Pinned Script**: Always run the pinned script, regardless of active editor
 - **CodeLens Integration**: "Run" button at the top of every `.ctl` file

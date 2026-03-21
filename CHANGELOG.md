@@ -6,9 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
 ## [2.1.0] - 2026-03-21
 
 ### ✨ Added
+
 - **Script Execution Pinning**: Pin a specific `.ctl` script and run it from any editor tab (#54)
   - **Script Selector**: Status bar widget with play button and script name dropdown
   - **Execution Modes**: Switch between Active Script (current editor) and Pinned Script (always runs pinned script)
@@ -19,16 +21,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **State Persistence**: Pinned script and mode preserved across VS Code sessions via workspaceState
 
 ### 🎯 Use Cases
+
 - Run test scripts while editing implementation files
 - Execute build/deployment scripts without switching tabs
 - Quick iteration: edit code, press `Ctrl+F5`, see results
 - Ideal for Test-Driven Development workflows
 
 ### 🙏 Credits
+
 - Feature contributed by [@JaMa-95](https://github.com/JaMa-95)
+
 ## [2.0.1] - 2026-01-25
 
 ### Fixed
+
 - **Binary Packaging**: Corrected binary used in VSIX package
   - Previous test build used incorrect binary
   - This release contains the correct production binary
@@ -36,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.0.0] - 2026-01-18
 
 ### ✨ Added
+
 - **GitHub Copilot Integration**: Registered Language Model Tool `winccoa_execute_script`
   - Enables AI assistants (GitHub Copilot) to autonomously execute CTL scripts
   - Simple interface: scriptPath + optional args + optional withEventConnection flag
@@ -46,6 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Detailed logging for debugging
 
 ### 🎯 Design Philosophy
+
 - **Clear Responsibilities**: Script execution belongs to Script Actions Extension
   - MCP Server Extension: Server lifecycle management only
   - Script Actions Extension: Script execution + AI tool
@@ -54,6 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Consistent Pattern**: Follows same architecture as CTL Language and LogViewer extensions
 
 ### 📝 Breaking Changes
+
 - MAJOR version bump (1.x → 2.0.0) due to new AI integration feature
 - No breaking changes to existing commands or API
 - Backward compatible with existing workflows
@@ -85,8 +94,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Play Button**: Added green play icon (▶) to editor title bar for quick script execution
 - Appears in context menu group for easy access
 - Executes current script with WinCC OA Script Actions
-
-## [Unreleased]
 
 ## [1.0.3] - 2026-01-01
 
