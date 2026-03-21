@@ -312,6 +312,15 @@ async function executeScript(
             return;
         }
 
+        // Clear LogViewer logs before execution (if auto-clear is enabled)
+        try {
+            await vscode.commands.executeCommand('winccoa-logviewer.clearLogs');
+            ExtensionOutputChannel.debug('ScriptExecution', 'Triggered LogViewer auto-clear');
+        } catch (error) {
+            // Ignore if LogViewer extension is not installed or command fails
+            ExtensionOutputChannel.trace('ScriptExecution', 'LogViewer auto-clear not available (extension may not be installed)');
+        }
+
         // Get configuration
         const config = await getScriptConfig();
         if (!config) {

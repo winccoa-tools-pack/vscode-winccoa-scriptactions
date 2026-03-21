@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-03-21
+
+### ✨ Added
+
+- **LogViewer Auto-Clear Integration**: Automatically clears the WinCC OA LogViewer before each script execution
+  - Fires `winccoa-logviewer.clearLogs` command before every script run
+  - Only clears if the LogViewer has `autoClearOnScriptExecution` setting enabled
+  - Graceful no-op if WinCC OA LogViewer extension is not installed
+  - Works with all execution modes: `executeScript`, `executeScriptWithArgs`, `executeScriptWithEventConnection`
+  - Perfect for Test-Driven Development: each run starts with a clean log view
+
 ## [2.1.0] - 2026-03-21
 
 ### ✨ Added
