@@ -2,7 +2,7 @@
 
 on:
   push:
-    branches: [develop, feature/*, release/*, hotfix/*]
+    branches: [main, develop, "release/**", "hotfix/**", "feature/**"]
   pull_request:
     branches: [main, develop]
     types: [opened, synchronize, reopened, edited, ready_for_review, closed]
@@ -22,9 +22,8 @@ jobs:
   ci-cd:
     uses: winccoa-tools-pack/.github/.github/workflows/reusable-ci-cd.yml@main
     with:
-      project_type: vscode
       build_command: "npm run compile"
       enable_coverage: true
       enable_xvfb: true
-      enable_integration_tests: false  # Handled by integration-winccoa.yml
+      enable_integration_tests: false
     secrets: inherit
