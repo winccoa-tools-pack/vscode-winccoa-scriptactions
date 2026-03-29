@@ -220,6 +220,8 @@ export function activate(context: vscode.ExtensionContext) {
         'Extension',
         'Commands registered: winccoa.executeScript, winccoa.executeScriptWithArgs, winccoa.executeScriptWithEventConnection, winccoa.executeScriptWithArgsAndEventConnection',
     );
+
+    return {};
 }
 
 async function setupCoreExtensionIntegration() {
