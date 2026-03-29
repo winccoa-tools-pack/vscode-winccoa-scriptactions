@@ -3,8 +3,6 @@ import { suite, test, suiteSetup, suiteTeardown } from 'mocha';
 import * as vscode from 'vscode';
 
 suite('WinCC OA Script Actions - Integration Tests', () => {
-    let extensionContext: vscode.ExtensionContext | undefined;
-
     suiteSetup(async function () {
         this.timeout(30000); // 30 second timeout for extension activation
 
@@ -15,7 +13,7 @@ suite('WinCC OA Script Actions - Integration Tests', () => {
         assert.ok(ext, 'Extension should be installed');
 
         // Activate extension
-        extensionContext = await ext.activate();
+        await ext.activate();
         console.log('✅ Extension activated');
     });
 
