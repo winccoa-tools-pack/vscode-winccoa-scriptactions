@@ -6,7 +6,7 @@ suite('ExtensionOutput - Unit Tests', () => {
         test('should accept valid log levels', () => {
             const validLevels = ['ERROR', 'WARN', 'INFO', 'DEBUG', 'TRACE'];
 
-            validLevels.forEach(level => {
+            validLevels.forEach((level) => {
                 const isValid = validLevels.includes(level);
                 assert.strictEqual(isValid, true, `${level} should be valid`);
             });
@@ -15,7 +15,7 @@ suite('ExtensionOutput - Unit Tests', () => {
         test('should reject invalid log levels', () => {
             const invalidLevels = ['VERBOSE', 'CRITICAL', 'ALL'];
 
-            invalidLevels.forEach(level => {
+            invalidLevels.forEach((level) => {
                 const validLevels = ['ERROR', 'WARN', 'INFO', 'DEBUG', 'TRACE'];
                 const isValid = validLevels.includes(level);
                 assert.strictEqual(isValid, false, `${level} should be invalid`);
@@ -35,7 +35,7 @@ suite('ExtensionOutput - Unit Tests', () => {
             const timestamp = new Date().toISOString();
             const formatted = `[${timestamp}] ${msg}`;
             assert.ok(formatted.includes(msg));
-            assert.ok(formatted.includes('[202'));  // Year prefix
+            assert.ok(formatted.includes('[202')); // Year prefix
         });
     });
 });

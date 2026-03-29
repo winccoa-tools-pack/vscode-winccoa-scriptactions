@@ -41,7 +41,7 @@ suite('WinCC OA Script Actions - Integration Tests', () => {
             const commands = await vscode.commands.getCommands(true);
             assert.ok(
                 commands.includes('winccoa.executeScript'),
-                'winccoa.executeScript should be registered'
+                'winccoa.executeScript should be registered',
             );
         });
 
@@ -49,7 +49,7 @@ suite('WinCC OA Script Actions - Integration Tests', () => {
             const commands = await vscode.commands.getCommands(true);
             assert.ok(
                 commands.includes('winccoa.executeScriptWithArgs'),
-                'winccoa.executeScriptWithArgs should be registered'
+                'winccoa.executeScriptWithArgs should be registered',
             );
         });
 
@@ -57,7 +57,7 @@ suite('WinCC OA Script Actions - Integration Tests', () => {
             const commands = await vscode.commands.getCommands(true);
             assert.ok(
                 commands.includes('winccoa.executeScriptWithEventConnection'),
-                'winccoa.executeScriptWithEventConnection should be registered'
+                'winccoa.executeScriptWithEventConnection should be registered',
             );
         });
 
@@ -65,7 +65,7 @@ suite('WinCC OA Script Actions - Integration Tests', () => {
             const commands = await vscode.commands.getCommands(true);
             assert.ok(
                 commands.includes('winccoa.selectScript'),
-                'winccoa.selectScript should be registered'
+                'winccoa.selectScript should be registered',
             );
         });
 
@@ -73,7 +73,7 @@ suite('WinCC OA Script Actions - Integration Tests', () => {
             const commands = await vscode.commands.getCommands(true);
             assert.ok(
                 commands.includes('winccoa.executeSelectedScript'),
-                'winccoa.executeSelectedScript should be registered'
+                'winccoa.executeSelectedScript should be registered',
             );
         });
 
@@ -81,7 +81,7 @@ suite('WinCC OA Script Actions - Integration Tests', () => {
             const commands = await vscode.commands.getCommands(true);
             assert.ok(
                 commands.includes('winccoa.pinScript'),
-                'winccoa.pinScript should be registered'
+                'winccoa.pinScript should be registered',
             );
         });
     });
@@ -110,7 +110,7 @@ suite('WinCC OA Script Actions - Integration Tests', () => {
             const logLevel = config.get<string>('logLevel');
             assert.ok(
                 ['ERROR', 'WARN', 'INFO', 'DEBUG', 'TRACE'].includes(logLevel || 'INFO'),
-                'logLevel should be valid'
+                'logLevel should be valid',
             );
         });
     });
