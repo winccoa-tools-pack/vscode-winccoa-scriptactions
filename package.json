@@ -27,7 +27,7 @@
     "automation"
   ],
   "engines": {
-    "vscode": "^1.106.0"
+    "vscode": "^1.110.0"
   },
   "categories": [
     "Other",
@@ -252,6 +252,12 @@
     "test": "npm run style-check && npm run compile && node ./dist/test/runTest.js",
     "test:unit": "npm test",
     "test:integration": "npm run build && node ./dist/test/runTest.js",
+    "test:unit:coverage": "npm run compile && npm run clean:coverage:unitTests && npm run test:unit",
+    "test:integration:coverage": "npm run compile && npm run clean:coverage:integrationTests && npm run test:integration",
+    "test:coverage": "npm run test:unit:coverage && npm run test:integration:coverage",
+    "clean:coverage": "node -e \"require('fs').rmSync('coverage',{ recursive:true, force:true, maxRetries:10, retryDelay:200 })\"",
+    "clean:coverage:integrationTests": "node -e \"require('fs').rmSync('coverage/integrationTests',{ recursive:true, force:true, maxRetries:10, retryDelay:200 })\"",
+    "clean:coverage:unitTests": "node -e \"require('fs').rmSync('coverage/unitTests',{ recursive:true, force:true, maxRetries:10, retryDelay:200 })\"",
     "ci:integration": "npm ci && npm run test:integration",
     "watch": "tsc --build --watch",
     "package": "vsce package",
@@ -260,7 +266,7 @@
   "devDependencies": {
     "@types/mocha": "^10.0.6",
     "@types/node": "^24.10.2",
-    "@types/vscode": "^1.80.0",
+    "@types/vscode": "^1.110.0",
     "@typescript-eslint/eslint-plugin": "^8.57.1",
     "@typescript-eslint/parser": "^8.57.1",
     "@vscode/test-electron": "^2.3.9",
