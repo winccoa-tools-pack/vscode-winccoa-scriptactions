@@ -2,7 +2,7 @@
   "name": "winccoa-script-actions",
   "displayName": "WinCC OA Script Actions",
   "description": "Execute WinCC OA CTRL scripts directly from VS Code",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "publisher": "RichardJanisch",
   "repository": {
     "type": "git",
@@ -39,7 +39,7 @@
   "activationEvents": [
     "onStartupFinished"
   ],
-  "main": "./dist/extension.js",
+  "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
@@ -249,16 +249,17 @@
     "format:md:check": "prettier --check \"**/*.md\"",
     "style-check": "npm run lint && npm run format:check && npm run lint:md && npm run format:md:check",
     "style-fix": "npm run lint:fix && npm run format && npm run lint:md:fix && npm run format:md",
-    "test": "npm run style-check && npm run compile && node ./dist/test/runTest.js",
-    "test:unit": "npm test",
-    "test:integration": "npm run build && node ./dist/test/runTest.js",
-    "test:unit:coverage": "npm run compile && npm run clean:coverage:unitTests && npm run test:unit",
-    "test:integration:coverage": "npm run compile && npm run clean:coverage:integrationTests && npm run test:integration",
+    "pretest": "npm run compile && npm run lint",
+    "test": "vscode-test",
+    "test:unit": "vscode-test --label=unitTests",
+    "test:integration": "vscode-test --label=integrationTests",
+    "test:unit:coverage": "npm run compile && npm run clean:coverage:unitTests && vscode-test --label=unitTests --coverage --coverage-output coverage/unitTests --coverage-reporter lcov --coverage-reporter html --coverage-reporter json-summary --coverage-reporter text-summary",
+    "test:integration:coverage": "npm run compile && npm run clean:coverage:integrationTests && vscode-test --label=integrationTests --coverage --coverage-output coverage/integrationTests --coverage-reporter lcov --coverage-reporter html --coverage-reporter json-summary --coverage-reporter text-summary",
     "test:coverage": "npm run test:unit:coverage && npm run test:integration:coverage",
     "clean:coverage": "node -e \"require('fs').rmSync('coverage',{ recursive:true, force:true, maxRetries:10, retryDelay:200 })\"",
     "clean:coverage:integrationTests": "node -e \"require('fs').rmSync('coverage/integrationTests',{ recursive:true, force:true, maxRetries:10, retryDelay:200 })\"",
     "clean:coverage:unitTests": "node -e \"require('fs').rmSync('coverage/unitTests',{ recursive:true, force:true, maxRetries:10, retryDelay:200 })\"",
-    "ci:integration": "npm ci && npm run test:integration",
+    "ci:integration": "npm ci && npm run compile && npm run test:integration",
     "watch": "tsc --build --watch",
     "package": "vsce package",
     "vscode:prepublish": "npm run compile"
@@ -266,9 +267,11 @@
   "devDependencies": {
     "@types/mocha": "^10.0.6",
     "@types/node": "^24.10.2",
+    "@types/sinon": "^17.0.4",
     "@types/vscode": "^1.110.0",
     "@typescript-eslint/eslint-plugin": "^8.57.1",
     "@typescript-eslint/parser": "^8.57.2",
+    "@vscode/test-cli": "^0.0.12",
     "@vscode/test-electron": "^2.3.9",
     "@vscode/vsce": "^3.7.1",
     "eslint": "^8.50.0",
@@ -276,6 +279,7 @@
     "markdownlint-cli": "^0.48.0",
     "mocha": "^11.3.0",
     "prettier": "^2.8.8",
+    "sinon": "^18.0.1",
     "typescript": "^5.2.0"
   },
   "overrides": {

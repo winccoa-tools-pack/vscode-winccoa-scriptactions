@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-03-29
+
+### ✨ Added
+
+- **Comprehensive Test Infrastructure**: Complete test setup aligned with `vscode-winccoa-project-admin` patterns
+  - **`@vscode/test-cli`**: Modern test runner replacing `@vscode/test-electron` for label-based test selection
+  - **`.vscode-test.mjs`**: Declarative test configuration with `unitTests` and `integrationTests` labels
+  - **Unit Tests** (`src/test/unit/`): Fast pure-TS tests with deterministic entry point via `index.ts`
+    - `scriptSelector.test.ts`: Path validation and argument parsing (incl. plain-string enforcement – no `-lflag` prefix)
+    - `extensionOutput.test.ts`: Log level validation and message formatting
+  - **Integration Tests** (`src/test/integration/`): Full VS Code extension host tests
+    - Extension activation, all command registrations, configuration defaults, output channel
+  - **Test Fixtures** (`src/test/fixtures/scripts/`): CTL scripts for execution testing
+    - `simple.ctl`, `withArgs.ctl`, `multipleArgs.ctl`, `errorScript.ctl`
+  - **Test Helpers** (`src/test/test-script-helpers.ts`): Reusable fixture path and script utilities
+  - **Coverage Support**: `npm run test:unit:coverage` / `test:integration:coverage` / `test:coverage`
+  - **Build output** moved from `dist/` → `out/` (aligns with project-admin)
+  - **`sinon`** added as dev dependency for future mocking needs
+
 ## [2.2.0] - 2026-03-21
 
 ### ✨ Added
