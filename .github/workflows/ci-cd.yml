@@ -26,5 +26,5 @@ jobs:
       build_command: "npm run compile"
       enable_coverage: true
       enable_xvfb: true
-      integration_test_command: "xvfb-run -a npx --no-install vscode-test --label integrationTests"
+      enable_integration_tests: false  # Handled by integration-winccoa.yml
     secrets: inherit
