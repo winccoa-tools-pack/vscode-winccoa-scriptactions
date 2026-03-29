@@ -2,7 +2,7 @@
 
 ## Folder Structure
 
-```
+```text
 src/
 ├── extension.ts                    # Entry point
 ├── scriptSelector.ts               # Business Logic
@@ -38,12 +38,14 @@ src/
 **Purpose:** Test pure TypeScript/JavaScript logic without VS Code API
 
 **Characteristics:**
+
 - ✅ **Fast** (milliseconds)
 - ✅ **No VS Code Extension Host** needed
 - ✅ **No mocking** (or minimal)
 - ✅ **Pure functions, utilities, data transformations**
 
 **Run with:**
+
 ```bash
 npm run test:unit
 # or
@@ -51,6 +53,7 @@ mocha 'dist/test/unit/**/*.test.js'
 ```
 
 **Example:**
+
 ```typescript
 // src/scriptSelector.ts
 export function parseScriptArguments(args: string): string[] {
@@ -86,12 +89,14 @@ suite('Script Selector - Unit Tests', () => {
 **Purpose:** Test VS Code API integration with mocked dependencies
 
 **Characteristics:**
+
 - ⚡ **Medium speed** (seconds)
 - 🎭 **Mocked VS Code API** (using sinon)
 - ✅ **Test commands, configuration, context**
 - ✅ **No real Extension Host** (faster than E2E)
 
 **Run with:**
+
 ```bash
 npm run test:integration
 # or
@@ -99,6 +104,7 @@ mocha 'dist/test/integration/**/*.test.js'
 ```
 
 **Example:**
+
 ```typescript
 // src/test/integration/commands.test.ts
 import * as assert from 'assert';
@@ -145,6 +151,7 @@ suite('Commands - Integration Tests', () => {
 **Purpose:** Test full extension in real VS Code Extension Host
 
 **Characteristics:**
+
 - 🐌 **Slow** (seconds to minutes)
 - ✅ **Real VS Code Extension Host**
 - ✅ **Real VS Code API** (no mocking)
@@ -152,6 +159,7 @@ suite('Commands - Integration Tests', () => {
 - ✅ **Optional: Real WinCC OA Runtime**
 
 **Run with:**
+
 ```bash
 npm run test:e2e
 # or
@@ -159,6 +167,7 @@ node dist/test/runTest.js
 ```
 
 **Example:**
+
 ```typescript
 // src/test/e2e/executeScript.test.ts
 import * as assert from 'assert';
@@ -422,6 +431,7 @@ suite('WinCC OA Runtime - E2E', () => {
 | E2E         | 🐌 Slow    | ❌ Low     | ✅ Real     | Full Stack   |
 
 **Recommendation:**
+
 - 70% Unit Tests (fast feedback)
 - 20% Integration Tests (verify VS Code integration)
 - 10% E2E Tests (smoke tests, critical paths)

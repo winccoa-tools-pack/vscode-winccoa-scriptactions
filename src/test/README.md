@@ -32,10 +32,12 @@ npm run test:integration:coverage
 Coverage is generated via `vscode-test --coverage`.
 
 Output locations:
+
 - `coverage/unitTests/` – Unit test coverage
 - `coverage/integrationTests/` – Integration test coverage
 
 Useful files:
+
 - `coverage/<suite>/index.html` – HTML report (open in browser)
 - `coverage/<suite>/lcov.info` – LCOV format for CI tooling
 - `coverage/<suite>/coverage-summary.json` – JSON summary
@@ -46,6 +48,7 @@ Test selection is **deterministic** via `.vscode-test.mjs` labels.
 This prevents stale compiled artifacts in `out/test/**` from being discovered/executed.
 
 Entry points:
+
 - **Unit**: `out/test/unit/index.js` (imports all `*.test.js` files)
 - **Integration**: `out/test/integration/vscode-integration.test.js`
 
