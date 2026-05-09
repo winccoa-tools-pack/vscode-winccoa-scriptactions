@@ -2,9 +2,9 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-2.2.0-blue.svg)
+![VS Marketplace](https://img.shields.io/visual-studio-marketplace/v/RichardJanisch.winccoa-script-actions?label=VS%20Marketplace)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
-![VS Code](https://img.shields.io/badge/VS%20Code-1.107.1-007ACC.svg)
+![VS Code](https://img.shields.io/badge/VS%20Code-%5E1.110.0-007ACC.svg)
 
 **Execute WinCC OA CTRL scripts directly from Visual Studio Code**
 
@@ -27,7 +27,7 @@
 
 ## ✨ Features
 
-### � Script Execution Pinning (NEW in 2.1.0)
+### Script Execution Pinning (NEW in 2.1.0)
 
 - **Pin & Run**: Pin a specific script and execute it from any editor tab
 - **Status Bar Widget**: Play button and script name dropdown for quick access
@@ -40,7 +40,7 @@
 
 **Perfect for Test-Driven Development**: Edit your code, press `Ctrl+F5`, and instantly run your test script without switching tabs!
 
-### �🚀 Quick Script Execution
+### Quick Script Execution
 
 - **Right-click execution**: Context menu on `.ctl` files in Explorer or editor
 - **Command Palette**: Execute scripts via `Ctrl+Shift+P`
@@ -106,7 +106,7 @@
 Found an issue? Please report it with:
 
 - WinCC OA version
-- Extension version (`1.0.0`)
+- Extension version (see VS Code Extensions view)
 - Script example that reproduces the issue
 - Enable `DEBUG` logging and attach log output
 
@@ -133,7 +133,7 @@ Access via `Ctrl+Shift+P`:
 
 ## 🛠️ Requirements
 
-- **VS Code:** 1.107.1 or higher
+- **VS Code:** 1.110.0 or higher
 - **WinCC OA:** 3.19+ with `WCCOActrl` executable
 - **WinCC OA Control:** Extension (optional, for auto-detection)
 - **Valid WinCC OA project**
@@ -167,7 +167,7 @@ main(string arg1, int arg2) {
 
 ---
 
-## � Troubleshooting
+## Troubleshooting
 
 ### Performance
 
