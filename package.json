@@ -276,7 +276,7 @@
     "markdownlint-cli": "^0.48.0",
     "mocha": "^11.7.5",
     "prettier": "^2.8.8",
-    "typescript": "^5.2.0"
+    "typescript": "^6.0.2"
   },
   "overrides": {
     "serialize-javascript": "^7.0.4"
